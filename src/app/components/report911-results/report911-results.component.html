@@ -1,0 +1,36 @@
+<div>
+  <form class="results-filters" (ngSubmit)="handleSearch()">
+    <div class="filter-group"><label>ID</label>
+      <input [ngModel]="filters().id ?? ''" (ngModelChange)="setFilter('id',$event)" name="id" placeholder="Aggregate ID" /></div>
+    <div class="filter-group"><label>DE Name</label>
+      <input [ngModel]="filters().deName ?? ''" (ngModelChange)="setFilter('deName',$event)" name="deName" placeholder="DE-1" /></div>
+    <div class="filter-group"><label>Status</label>
+      <select [ngModel]="filters().status ?? ''" (ngModelChange)="setFilter('status',$event)" name="status">
+        <option value="">All</option>
+        @for (s of statuses; track s) { <option [value]="s">{{ s }}</option> }
+      </select></div>
+    <div class="filter-group"><label>Type</label>
+      <select [ngModel]="unReportValue()" (ngModelChange)="setUnReport($event)" name="unReport">
+        <option value="">All</option>
+        <option value="false">Reported</option>
+        <option value="true">Un-Reported</option>
+      </select></div>
+    <div class="filter-group"><label>Activation</label>
+      <select [ngModel]="filters().activation ?? ''" (ngModelChange)="setFilter('activation',$event)" name="activation">
+        <option value="">All</option>
+        <option value="true">Activated</option>
+        <option value="false">Deactivated</option>
+      </select></div>
+    <button type="submit" class="search-btn" [disabled]="loading()">{{ loading() ? 'Searching...' : 'Search' }}</button>
+  </form>
+
+  @if (error()) { <p class="results-error">{{ error() }}</p> }
+  @if (results() !== null && results()!.length === 0) { <p class="results-empty">No results found.</p> }
+  @if (results() !== null && results()!.length > 0) {
+    <div class="result-cards">
+      @for (r of results()!; track r.id) {
+        <app-result-card [record]="r" (refresh)="handleRefresh($event)" />
+      }
+    </div>
+  }
+</div>

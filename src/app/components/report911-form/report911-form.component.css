@@ -1,0 +1,365 @@
+.form-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 24px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  border: none;
+  background: transparent;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.tab-btn:hover {
+  color: #4f46e5;
+}
+
+.tab-btn.active {
+  color: #4f46e5;
+  border-bottom-color: #4f46e5;
+  font-weight: 600;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.form-group small {
+  font-weight: 400;
+  color: #9ca3af;
+  font-size: 0.75rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 9px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: #1a1a2e;
+  background: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  width: 100%;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  font-family: 'Courier New', monospace;
+  font-size: 0.82rem;
+}
+
+.error-msg {
+  grid-column: 1 / -1;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #b91c1c;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.84rem;
+}
+
+.submit-btn {
+  grid-column: 1 / -1;
+  padding: 11px;
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: #4338ca;
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submit-btn.unreport {
+  background: #dc2626;
+}
+
+.submit-btn.unreport:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+/* Lookup result */
+.lookup-result {
+  margin-top: 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.lookup-kv {
+  display: flex;
+  flex-direction: column;
+}
+
+.lookup-kv-row {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.84rem;
+}
+
+.lookup-kv-row:last-child { border-bottom: none; }
+.lookup-kv-row:nth-child(even) { background: #f8fafc; }
+
+.lookup-kv-key {
+  font-weight: 600;
+  color: #374151;
+}
+
+.lookup-kv-val {
+  color: #4b5563;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.lookup-table-wrapper {
+  overflow-x: auto;
+}
+
+.lookup-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+
+.lookup-table th {
+  background: #f8fafc;
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.lookup-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #4b5563;
+  word-break: break-all;
+}
+
+.lookup-table tr:last-child td { border-bottom: none; }
+.lookup-table tr:hover td { background: #f8fafc; }
+
+.lookup-raw {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  padding: 16px;
+  font-size: 0.8rem;
+  overflow: auto;
+  max-height: 400px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tab-btn {
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-group.full-width {
+    grid-column: 1;
+  }
+
+  .lookup-kv-row {
+    grid-template-columns: 140px 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .tab-btn {
+    padding: 8px 10px;
+    font-size: 0.78rem;
+  }
+
+  .lookup-kv-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .lookup-kv-key {
+    color: #4f46e5;
+  }
+}
+
+/* DE checkbox select */
+.de-checkbox-select {
+  position: relative;
+  width: 100%;
+}
+
+.de-checkbox-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 42px;
+  padding: 6px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  gap: 8px;
+}
+
+.de-checkbox-trigger:hover {
+  border-color: #9ca3af;
+}
+
+.de-placeholder {
+  color: #9ca3af;
+  font-size: 0.88rem;
+}
+
+.de-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex: 1;
+}
+
+.de-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #eef2ff;
+  color: #4f46e5;
+  border: 1px solid #c7d2fe;
+  border-radius: 999px;
+  padding: 2px 8px 2px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.de-tag button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #818cf8;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.de-tag button:hover { color: #dc2626; }
+
+.de-arrow {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+.de-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  z-index: 200;
+  overflow: hidden;
+}
+
+.de-search {
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.88rem;
+  outline: none;
+  color: #1a1a2e;
+}
+
+.de-options {
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.de-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  font-size: 0.88rem;
+  color: #374151;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.de-option:hover:not(.disabled) { background: #f8fafc; }
+.de-option.disabled { opacity: 0.4; cursor: not-allowed; }
+
+.de-option input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  accent-color: #4f46e5;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.de-empty {
+  padding: 12px 14px;
+  font-size: 0.84rem;
+  color: #9ca3af;
+  text-align: center;
+}

@@ -1,0 +1,38 @@
+<div>
+  <form class="rc-results-filters" (ngSubmit)="handleSearch()">
+    <div class="filter-group"><label>ID</label>
+      <input [ngModel]="filters().id ?? ''" (ngModelChange)="setFilter('id',$event)" name="id" placeholder="Aggregate ID" /></div>
+    <div class="filter-group"><label>Config ID</label>
+      <input [ngModel]="filters().configId ?? ''" (ngModelChange)="setFilter('configId',$event)" name="configId" placeholder="Config ID" /></div>
+    <div class="filter-group"><label>Section ID</label>
+      <input [ngModel]="filters().sectionId ?? ''" (ngModelChange)="setFilter('sectionId',$event)" name="sectionId" placeholder="Section ID" /></div>
+    <div class="filter-group"><label>Element ID</label>
+      <input [ngModel]="filters().elementId ?? ''" (ngModelChange)="setFilter('elementId',$event)" name="elementId" placeholder="Element ID" /></div>
+    <div class="filter-group"><label>Program</label>
+      <select [ngModel]="filters().program ?? ''" (ngModelChange)="setFilter('program',$event)" name="program">
+        <option value="">All</option>
+        @for (p of programs; track p) { <option [value]="p">{{ p }}</option> }
+      </select></div>
+    <div class="filter-group"><label>Task</label>
+      <select [ngModel]="filters().task ?? ''" (ngModelChange)="setFilter('task',$event)" name="task">
+        <option value="">All</option>
+        @for (t of tasks; track t) { <option [value]="t">{{ t }}</option> }
+      </select></div>
+    <div class="filter-group"><label>Status</label>
+      <select [ngModel]="filters().status ?? ''" (ngModelChange)="setFilter('status',$event)" name="status">
+        <option value="">All</option>
+        @for (s of statuses; track s) { <option [value]="s">{{ s }}</option> }
+      </select></div>
+    <button type="submit" class="search-btn" [disabled]="loading()">{{ loading() ? 'Searching...' : 'Search' }}</button>
+  </form>
+
+  @if (error()) { <p class="results-error">{{ error() }}</p> }
+  @if (results() !== null && results()!.length === 0) { <p class="results-empty">No results found.</p> }
+  @if (results() !== null && results()!.length > 0) {
+    <div class="result-cards">
+      @for (r of results()!; track r.id) {
+        <app-copy-result-card [record]="r" (refresh)="handleRefresh($event)" />
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,91 @@
+<div>
+  <div class="form-tabs">
+    <button type="button" class="tab-btn" [class.active]="mode()==='copy'" (click)="mode.set('copy')">Copy DataCollection Value</button>
+    <button type="button" class="tab-btn" [class.active]="mode()==='lookup'" (click)="mode.set('lookup')">Record Lookup</button>
+    <button type="button" class="tab-btn" [class.active]="mode()==='results'" (click)="mode.set('results')">Tool Results</button>
+  </div>
+
+  @if (mode() === 'results') {
+    <app-record-copy-results />
+  } @else if (mode() === 'lookup') {
+    <div class="form-grid">
+      <div class="form-group"><label>Case ID</label>
+        <input required [ngModel]="lookup().caseId" (ngModelChange)="setLookupField('caseId',$event)" placeholder="case123" /></div>
+      <div class="form-group"><label>Program</label>
+        <select [ngModel]="lookup().program" (ngModelChange)="setLookupField('program',$event)">
+          @for (p of programs; track p) { <option [value]="p">{{ p }}</option> }
+        </select></div>
+      <div class="form-group"><label>Config {{ lookupMappingLoading() ? '(loading...)' : '' }}</label>
+        <select required [ngModel]="lookup().configId" (ngModelChange)="setLookupField('configId',$event)" [disabled]="lookupMappingLoading()">
+          <option value="">Select config...</option>
+          @for (c of lookupMapping(); track c.config.configId) { <option [value]="c.config.configId">{{ c.config.configLabel }}</option> }
+        </select></div>
+      <div class="form-group"><label>Section</label>
+        <select required [ngModel]="lookup().sectionId" (ngModelChange)="setLookupField('sectionId',$event)" [disabled]="!lookup().configId">
+          <option value="">Select section...</option>
+          @for (s of lookupSections; track s.section.sectionId) { <option [value]="s.section.sectionId">{{ s.section.sectionLabel }}</option> }
+        </select></div>
+      <div class="form-group"><label>Element</label>
+        <select required [ngModel]="lookup().elementId" (ngModelChange)="setLookupField('elementId',$event)" [disabled]="!lookup().sectionId">
+          <option value="">Select element...</option>
+          @for (el of lookupElements; track el.elementId) { <option [value]="el.elementId">{{ el.elementLabel }}</option> }
+        </select></div>
+      @if (lookupError()) { <p class="error-msg">{{ lookupError() }}</p> }
+      <button type="button" class="submit-btn" [disabled]="loading()" (click)="handleLookup()">
+        {{ loading() ? 'Fetching...' : 'Fetch Record Data' }}
+      </button>
+    </div>
+    @if (lookupResult()) {
+      <div class="lookup-result">
+        @for (row of lookupResult()!; track $index) {
+          <div class="lookup-kv">
+            @for (entry of lookupEntries(row); track entry.key) {
+              <div class="lookup-kv-row">
+                <span class="lookup-kv-key">{{ entry.key }}</span>
+                <span class="lookup-kv-val">{{ entry.val }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  } @else {
+    <div class="form-grid">
+      <div class="form-group"><label>Program</label>
+        <select [ngModel]="form().program" (ngModelChange)="setFormField('program',$event)">
+          @for (p of programs; track p) { <option [value]="p">{{ p }}</option> }
+        </select></div>
+      <div class="form-group"><label>Task</label>
+        <select [ngModel]="form().task" (ngModelChange)="setFormField('task',$event)">
+          @for (t of tasks; track t) { <option [value]="t">{{ t }}</option> }
+        </select></div>
+      <div class="form-group"><label>Config {{ mappingLoading() ? '(loading...)' : '' }}</label>
+        <select required [ngModel]="form().configId" (ngModelChange)="setFormField('configId',$event)" [disabled]="mappingLoading()">
+          <option value="">Select config...</option>
+          @for (c of mapping(); track c.config.configId) { <option [value]="c.config.configId">{{ c.config.configLabel }}</option> }
+        </select></div>
+      @if (needsSection) {
+        <div class="form-group"><label>Section</label>
+          <select required [ngModel]="form().sectionId" (ngModelChange)="setFormField('sectionId',$event)" [disabled]="!form().configId">
+            <option value="">Select section...</option>
+            @for (s of formSections; track s.section.sectionId) { <option [value]="s.section.sectionId">{{ s.section.sectionLabel }}</option> }
+          </select></div>
+      }
+      @if (needsElement) {
+        <div class="form-group"><label>Element</label>
+          <select required [ngModel]="form().elementId" (ngModelChange)="setFormField('elementId',$event)" [disabled]="!form().sectionId">
+            <option value="">Select element...</option>
+            @for (el of formElements; track el.elementId) { <option [value]="el.elementId">{{ el.elementLabel }}</option> }
+          </select></div>
+      }
+      <div class="form-group"><label>Effective Date <small>optional</small></label>
+        <input type="date" [ngModel]="form().effectiveDate" (ngModelChange)="setFormField('effectiveDate',$event)" /></div>
+      <div class="form-group full-width"><label>Case IDs <small>one per line or comma separated</small></label>
+        <textarea required rows="4" [ngModel]="form().caseIdsRaw" (ngModelChange)="setFormField('caseIdsRaw',$event)" placeholder="case123&#10;case456"></textarea></div>
+      @if (error()) { <p class="error-msg">{{ error() }}</p> }
+      <button type="button" class="submit-btn" [disabled]="loading()" (click)="handleSubmit()">
+        {{ loading() ? 'Submitting...' : 'Copy to Record' }}
+      </button>
+    </div>
+  }
+</div>

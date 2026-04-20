@@ -1,0 +1,38 @@
+<div class="result-card">
+  <div class="result-card-header">
+    <div class="result-card-meta">
+      @if (record.program) { <span class="result-de">{{ record.program }}</span> }
+      <span class="status-badge" [ngClass]="record.status">{{ record.status }}</span>
+      @if (record.task) { <span class="type-badge report">{{ record.task }}</span> }
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="result-date">{{ record.createdAt | date:'medium' }}</span>
+      <button class="refresh-btn" (click)="handleRefresh()" [disabled]="refreshing()" title="Refresh">
+        {{ refreshing() ? '⟳' : '↻' }}
+      </button>
+    </div>
+  </div>
+  <div class="result-id"><span class="result-label">ID</span><code>{{ record.id }}</code></div>
+  <div class="result-id"><span class="result-label">Task</span><span>{{ record.task || '—' }}</span></div>
+  <div class="result-id"><span class="result-label">Config ID</span><code>{{ record.configId }}</code></div>
+  <div class="result-id"><span class="result-label">Section ID</span><code>{{ record.sectionId }}</code></div>
+  <div class="result-id"><span class="result-label">Element ID</span><code>{{ record.elementId }}</code></div>
+  <div class="result-id"><span class="result-label">Created by</span><span>{{ record.createdBy && record.createdBy.name ? record.createdBy.name : '—' }}</span></div>
+  <div class="result-cases-grid">
+    <div class="case-list case-list--success">
+      <p class="case-list-title">Success <span class="case-count">{{ record.successCases ? record.successCases.length : 0 }}</span></p>
+      @if (!record.successCases || !record.successCases.length) { <p class="case-empty">None</p> }
+      @else { <ul>@for (c of record.successCases; track c) { <li>{{ c }}</li> }</ul> }
+    </div>
+    <div class="case-list case-list--warning">
+      <p class="case-list-title">Skipped <span class="case-count">{{ record.skippedCases ? record.skippedCases.length : 0 }}</span></p>
+      @if (!record.skippedCases || !record.skippedCases.length) { <p class="case-empty">None</p> }
+      @else { <ul>@for (s of record.skippedCases; track s.caseId) { <li>{{ s.caseId }} — {{ s.reason }}</li> }</ul> }
+    </div>
+    <div class="case-list case-list--error">
+      <p class="case-list-title">Errors <span class="case-count">{{ record.errorCases ? record.errorCases.length : 0 }}</span></p>
+      @if (!record.errorCases || !record.errorCases.length) { <p class="case-empty">None</p> }
+      @else { <ul>@for (c of record.errorCases; track c) { <li>{{ c }}</li> }</ul> }
+    </div>
+  </div>
+</div>

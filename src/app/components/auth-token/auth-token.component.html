@@ -1,0 +1,28 @@
+<div class="auth-bar">
+  <div class="auth-status">
+    <div class="auth-dot" [class.authorized]="isAuthorized" [class.unauthorized]="!isAuthorized"></div>
+    <span>{{ isAuthorized ? 'Authorized' : 'Unauthorized' }}</span>
+  </div>
+  @if (isAuthorized) {
+    <button class="token-btn clear" (click)="handleClear()">Clear Token</button>
+  }
+  <button class="token-btn" (click)="handleOpen()">{{ isAuthorized ? 'Update Token' : 'Set Token' }}</button>
+</div>
+
+@if (open()) {
+  <div class="modal-overlay" (click)="handleCancel()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3>Bearer Token</h3>
+      <div class="modal-field">
+        <label>Access Token</label>
+        <p>Base URL is auto-derived from the token environment.</p>
+        <textarea rows="5" [ngModel]="draft()" (ngModelChange)="draft.set($event)"
+          placeholder="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button (click)="handleCancel()">Cancel</button>
+        <button class="save-btn" (click)="handleSave()" [disabled]="!draft().trim()">Save &amp; Authorize</button>
+      </div>
+    </div>
+  </div>
+}

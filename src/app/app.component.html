@@ -1,0 +1,80 @@
+<div class="app">
+  <header class="app-header">
+    <div class="tool-switcher-wrapper">
+      <div class="tool-switcher" (blur)="toolMenuOpen.set(false)" tabindex="-1">
+        <button class="tool-switcher-btn" (click)="toggleToolMenu()">
+          {{ toolLabels[activeTool()] }}
+          <span class="tool-switcher-arrow" [class.open]="toolMenuOpen()">▾</span>
+        </button>
+        @if (toolMenuOpen()) {
+          <div class="tool-switcher-menu">
+            @for (key of toolKeys; track key) {
+              <button class="tool-switcher-item" [class.active]="key === activeTool()" (mousedown)="selectTool(key)">
+                {{ toolLabels[key] }}
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </div>
+    <span class="badge">Super Admin</span>
+    @if (tenant()) { <span class="tenant-badge">{{ tenant() }}</span> }
+    @if (env()) { <span class="env-badge" [ngClass]="'env-badge--' + env().toLowerCase()">{{ env() }}</span> }
+    @if (userName()) { <span class="welcome-name">Welcome, {{ userName() }}</span> }
+    <app-auth-token [token]="auth.token()" (tokenSave)="onTokenSave($event)" />
+  </header>
+
+  @if (activeTool() === 'report911') {
+    <div class="card">
+      <p class="card-title">Submit Record</p>
+      <app-report911-form (success)="on911Success($event)" />
+    </div>
+
+    @if (postResults911().length > 0) {
+      <div class="card">
+        <p class="card-title">Submission Results</p>
+        <div class="result-cards">
+          @for (r of postResults911(); track r.id) {
+            <app-result-card [record]="r" (refresh)="on911Refresh($event)" />
+          }
+        </div>
+      </div>
+    } @else if (submitted911()) {
+      <div class="success-banner">
+        <h4>Submitted — copy your GUIDs below</h4>
+        @for (r of submitted911()!; track r.id) {
+          <div class="guid-item">
+            <p>{{ r.message }}</p>
+            <code title="Click to select">{{ r.id }}</code>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  @if (activeTool() === 'recordCopy') {
+    <div class="card">
+      <p class="card-title">Copy DataCollection Value to Record</p>
+      <app-record-copy-form (success)="onCopySuccess($event)" />
+    </div>
+
+    @if (postResultsCopy().length > 0) {
+      <div class="card">
+        <p class="card-title">Submission Result</p>
+        <div class="result-cards">
+          @for (r of postResultsCopy(); track r.id) {
+            <app-copy-result-card [record]="r" (refresh)="onCopyRefresh($event)" />
+          }
+        </div>
+      </div>
+    } @else if (submittedCopy()) {
+      <div class="success-banner">
+        <h4>Submitted — copy your GUID below</h4>
+        <div class="guid-item">
+          <p>{{ submittedCopy()!.message }}</p>
+          <code title="Click to select">{{ submittedCopy()!.id }}</code>
+        </div>
+      </div>
+    }
+  }
+</div>
