@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, signal, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './services/auth.service';
 import { Report911Service, CommandResult, ResultRecord } from './services/report911.service';
@@ -15,7 +15,7 @@ type ActiveTool = 'report911' | 'recordCopy';
 
 const TOOL_LABELS: Record<ActiveTool, string> = {
   report911: 'Report 911 SPIDEY Tool',
-  recordCopy: 'Copy DataCollection To Record Tool',
+  recordCopy: 'Record Tool',
 };
 
 @Component({
@@ -53,7 +53,15 @@ export class AppComponent {
     public auth: AuthService,
     private report911: Report911Service,
     private recordCopy: RecordCopyService,
+    private elRef: ElementRef,
   ) {}
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    if (this.toolMenuOpen() && !this.elRef.nativeElement.querySelector('.tool-switcher')?.contains(event.target)) {
+      this.toolMenuOpen.set(false);
+    }
+  }
 
   selectTool(tool: ActiveTool) {
     this.activeTool.set(tool);
@@ -70,7 +78,7 @@ export class AppComponent {
     results.forEach(r => {
       this.report911.getResults({ id: r.id }).subscribe({
         next: data => {
-          if (data[0]) this.postResults911.update(prev => [...prev.filter(x => x.id !== data[0].id), data[0]]);
+          if (data[0]) this.postResults911.update(prev => [data[0], ...prev.filter(x => x.id !== data[0].id)]);
         },
         error: () => {}
       });
@@ -87,9 +95,10 @@ export class AppComponent {
 
   onCopySuccess(result: CopyCommandResult) {
     this.submittedCopy.set(result);
-    this.postResultsCopy.set([]);
     this.recordCopy.getResults({ id: result.id }).subscribe({
-      next: data => { if (data[0]) this.postResultsCopy.set([data[0]]); },
+      next: data => {
+        if (data[0]) this.postResultsCopy.update(prev => [data[0], ...prev.filter(r => r.id !== data[0].id)]);
+      },
       error: () => {}
     });
   }

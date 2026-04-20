@@ -1,7 +1,8 @@
 <div class="app">
   <header class="app-header">
+    <img class="app-logo" src="/assets/informed-logo.svg" alt="Informed logo" />
     <div class="tool-switcher-wrapper">
-      <div class="tool-switcher" (blur)="toolMenuOpen.set(false)" tabindex="-1">
+      <div class="tool-switcher">
         <button class="tool-switcher-btn" (click)="toggleToolMenu()">
           {{ toolLabels[activeTool()] }}
           <span class="tool-switcher-arrow" [class.open]="toolMenuOpen()">▾</span>
@@ -54,7 +55,7 @@
 
   @if (activeTool() === 'recordCopy') {
     <div class="card">
-      <p class="card-title">Copy DataCollection Value to Record</p>
+      <p class="card-title">Record Tool</p>
       <app-record-copy-form (success)="onCopySuccess($event)" />
     </div>
 

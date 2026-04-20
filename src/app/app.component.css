@@ -7,10 +7,16 @@
 .app-header {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 4.8px;
   margin-bottom: 32px;
   padding-bottom: 20px;
   border-bottom: 2px solid #e2e8f0;
+}
+
+.app-logo {
+  height: 32px;
+  width: auto;
+  flex-shrink: 0;
 }
 
 .app-header h1 {
@@ -158,6 +164,10 @@
 @media (max-width: 480px) {
   .app {
     padding: 12px;
+  }
+
+  .app-logo {
+    height: 24px;
   }
 
   .app-header h1 {
