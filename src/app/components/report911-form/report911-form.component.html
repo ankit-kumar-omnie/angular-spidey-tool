@@ -74,7 +74,7 @@
       @if (mode() !== 'activation') {
         <div class="form-group full-width">
           <label>DE Name(s) <small>select up to {{ maxDe }} — {{ form().deNames.length }}/{{ maxDe }} selected</small></label>
-          <div class="de-checkbox-select">
+          <div class="de-checkbox-select" #deDropdownContainer>
             <div class="de-checkbox-trigger" (click)="toggleDeDropdown()">
               @if (!form().deNames.length) {
                 <span class="de-placeholder">Select DE names...</span>

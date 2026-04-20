@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, signal, OnInit } from '@angular/core';
+import { Component, Output, EventEmitter, signal, OnInit, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Report911Service, CommandResult, Quarter, PolicyVersion } from '../../services/report911.service';
@@ -20,6 +20,7 @@ type Mode = 'copy' | 'unReport' | 'activation' | 'lookup' | 'results';
 })
 export class Report911FormComponent implements OnInit {
   @Output() success = new EventEmitter<CommandResult | CommandResult[]>();
+  @ViewChild('deDropdownContainer') deDropdownContainer?: ElementRef<HTMLElement>;
 
   mode = signal<Mode>('copy');
   quarters = QUARTERS;
@@ -69,6 +70,16 @@ export class Report911FormComponent implements OnInit {
 
   toggleDeDropdown(): void {
     this.deDropdownOpen.update(o => !o);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.deDropdownOpen()) return;
+    const target = event.target as Node | null;
+    const container = this.deDropdownContainer?.nativeElement;
+    if (container && target && !container.contains(target)) {
+      this.deDropdownOpen.set(false);
+    }
   }
 
   toggleDe(name: string): void {
