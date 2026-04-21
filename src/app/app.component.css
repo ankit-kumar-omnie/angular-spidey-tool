@@ -109,6 +109,19 @@
   box-shadow: 0 0 10px rgba(186, 230, 253, 0.4);
 }
 
+.user-role {
+  background: #e9d5ff;
+  color: #581c87;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 5px 16px;
+  border-radius: 999px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: none;
+  box-shadow: 0 0 10px rgba(233, 213, 255, 0.4);
+}
+
 .welcome-name {
   background: color-mix(in srgb, var(--bg-primary) 60%, var(--bg-secondary));
   color: var(--text-primary);

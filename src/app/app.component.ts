@@ -49,6 +49,7 @@ export class AppComponent {
   tenant = computed(() => this.auth.token() ? this.auth.decodeTenant(this.auth.token()) : '');
   env = computed(() => this.auth.token() ? this.auth.decodeEnv(this.auth.token()) : '');
   userName = computed(() => this.auth.token() ? this.auth.decodeUserName(this.auth.token()) : '');
+  role = computed(()=> this.auth.token() ? (this.auth.decodeRole(this.auth.token()) || 'User') : '');
 
   constructor(
     public auth: AuthService,

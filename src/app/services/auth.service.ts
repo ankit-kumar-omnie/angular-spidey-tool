@@ -51,6 +51,16 @@ export class AuthService {
     } catch { return ''; }
   }
 
+  decodeRole(token:string):string{
+    try{
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const role = payload['role'];
+      return typeof role === 'string' ? 'Super Admin' : '';
+    } catch {
+      return `` 
+    }
+  }
+
   decodeEnv(token: string): 'Test' | 'Staging' | 'Production' | '' {
     try {
       const aud: string[] = JSON.parse(atob(token.split('.')[1])).aud ?? [];

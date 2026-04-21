@@ -33,7 +33,7 @@
       }}</span>
     }
     @if (userName()) {
-      <span class="welcome-name">Welcome, {{ userName() }}</span>
+      <span class="welcome-name">{{ userName() }} @if (role()) { ({{ role() }}) }</span>
     }
     <app-auth-token [token]="auth.token()" (tokenSave)="onTokenSave($event)" />
    <button
