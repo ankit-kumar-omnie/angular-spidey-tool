@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from './services/auth.service';
 import { Report911Service, CommandResult, ResultRecord } from './services/report911.service';
 import { RecordCopyService, CopyCommandResult, CopyResultRecord } from './services/record-copy.service';
+import { ThemeService } from './services/theme.service';
 import { AuthTokenComponent } from './components/auth-token/auth-token.component';
 import { Report911FormComponent } from './components/report911-form/report911-form.component';
 import { Report911ResultsComponent } from './components/report911-results/report911-results.component';
@@ -51,10 +52,13 @@ export class AppComponent {
 
   constructor(
     public auth: AuthService,
+    public theme: ThemeService,
     private report911: Report911Service,
     private recordCopy: RecordCopyService,
     private elRef: ElementRef,
-  ) {}
+  ) {
+    this.theme.initTheme();
+  }
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
@@ -69,6 +73,7 @@ export class AppComponent {
   }
 
   toggleToolMenu() { this.toolMenuOpen.update(o => !o); }
+  toggleTheme() { this.theme.toggleTheme(); }
 
   onTokenSave(token: string) { this.auth.setToken(token); }
 
