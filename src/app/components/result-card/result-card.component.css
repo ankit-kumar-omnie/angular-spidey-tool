@@ -183,7 +183,7 @@
 .case-list-title {
   font-size: 0.8rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: black;
   margin-bottom: 8px;
   display: flex;
   align-items: center;
@@ -212,7 +212,7 @@
 
 .case-list ul li {
   font-size: 0.78rem;
-  color: var(--text-secondary);
+  color: var(--accent);
   word-break: break-word;
 }
 

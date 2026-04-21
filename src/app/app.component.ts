@@ -16,7 +16,7 @@ type ActiveTool = 'report911' | 'recordCopy';
 
 const TOOL_LABELS: Record<ActiveTool, string> = {
   report911: 'Report 911 SPIDEY Tool',
-  recordCopy: 'Record Tool',
+  recordCopy: 'Record SPIDEY Tool',
 };
 
 @Component({
