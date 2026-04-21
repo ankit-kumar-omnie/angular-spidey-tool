@@ -123,7 +123,7 @@ export class RecordCopyFormComponent implements OnInit {
   handleSubmit() {
     this.error.set(null);
     const f = this.form();
-    const caseIds = f.caseIdsRaw.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+    const caseIds = f.caseIdsRaw.split(/[\n,]+/).map(s => s.trim().replace(/^["']|["']$/g, '')).filter(Boolean);
     if (!caseIds.length) { this.error.set('Enter at least one case ID.'); return; }
 
     this.loading.set(true);
@@ -143,7 +143,7 @@ export class RecordCopyFormComponent implements OnInit {
     this.lookupResult.set(null);
     const l = this.lookup();
     this.loading.set(true);
-    this.svc.getRecordData(l.caseId, l.configId, l.sectionId, l.elementId).subscribe({
+    this.svc.getRecordData(l.caseId.replace(/^["']|["']$/g, ''), l.configId, l.sectionId, l.elementId).subscribe({
       next: d => { this.lookupResult.set(d); this.loading.set(false); },
       error: e => { this.lookupError.set(e.message ?? JSON.stringify(e)); this.loading.set(false); },
     });

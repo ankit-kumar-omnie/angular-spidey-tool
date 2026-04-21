@@ -117,7 +117,7 @@ export class Report911FormComponent implements OnInit {
   handleSubmit(): void {
     this.error.set(null);
     const f = this.form();
-    const caseIds = f.caseIdsRaw.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+    const caseIds = f.caseIdsRaw.split(/[\n,]+/).map(s => s.trim().replace(/^["']|["']$/g, '')).filter(Boolean);
     if (!caseIds.length) { this.error.set('Enter at least one case ID.'); return; }
     if (this.mode() !== 'activation' && !f.deNames.length) { this.error.set('Select at least one DE Name.'); return; }
 
@@ -147,7 +147,7 @@ export class Report911FormComponent implements OnInit {
     this.lookupResult.set(null);
     const l = this.lookup();
     this.loading.set(true);
-    this.svc.getData(l.caseId, l.deName, l.programYear, l.quarter, l.policyVersion).subscribe({
+    this.svc.getData(l.caseId.replace(/^["']|["']$/g, ''), l.deName, l.programYear, l.quarter, l.policyVersion).subscribe({
       next: d => { this.lookupResult.set(d); this.loading.set(false); },
       error: (e: Error) => { this.lookupError.set(e.message ?? JSON.stringify(e)); this.loading.set(false); },
     });
