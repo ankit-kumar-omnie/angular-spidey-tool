@@ -1,0 +1,148 @@
+.snackbar-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 380px;
+  width: calc(100vw - 48px);
+  pointer-events: none;
+}
+
+.snack {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 14px 13px 16px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  pointer-events: all;
+  overflow: hidden;
+  animation: snack-in 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Type variants */
+.snack--success {
+  background: #f0fdf4;
+  border-color: #86efac;
+  color: #166534;
+}
+
+.snack--error {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #991b1b;
+}
+
+.snack--warning {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: #854d0e;
+}
+
+.snack--info {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+
+/* Dark mode overrides */
+[data-theme='dark'] .snack--success {
+  background: rgba(22,101,52,0.22);
+  border-color: rgba(134,239,172,0.3);
+  color: #86efac;
+}
+
+[data-theme='dark'] .snack--error {
+  background: rgba(153,27,27,0.22);
+  border-color: rgba(252,165,165,0.3);
+  color: #fca5a5;
+}
+
+[data-theme='dark'] .snack--warning {
+  background: rgba(133,77,14,0.22);
+  border-color: rgba(253,230,138,0.3);
+  color: #fde68a;
+}
+
+[data-theme='dark'] .snack--info {
+  background: rgba(29,78,216,0.22);
+  border-color: rgba(191,219,254,0.3);
+  color: #93c5fd;
+}
+
+.snack-icon {
+  font-size: 1rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+
+.snack-message {
+  flex: 1;
+  word-break: break-word;
+}
+
+.snack-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.78rem;
+  color: inherit;
+  opacity: 0.6;
+  padding: 2px 4px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  transition: opacity 0.15s;
+  line-height: 1;
+}
+
+.snack-close:hover { opacity: 1; }
+
+/* Progress bar — 5s countdown */
+.snack-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: currentColor;
+  opacity: 0.3;
+  border-radius: 0 0 12px 12px;
+  animation: progress 5s linear forwards;
+  transform-origin: left;
+}
+
+@keyframes progress {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+
+@keyframes snack-in {
+  from {
+    opacity: 0;
+    transform: translateX(40px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@media (max-width: 480px) {
+  .snackbar-container {
+    bottom: 16px;
+    right: 12px;
+    left: 12px;
+    width: auto;
+    max-width: 100%;
+  }
+}

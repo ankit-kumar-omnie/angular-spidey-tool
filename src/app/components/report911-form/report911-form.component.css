@@ -85,9 +85,9 @@
 
 .error-msg {
   grid-column: 1 / -1;
-  background: #fef2f2;
-  border: 1px solid #fca5a5;
-  color: #b91c1c;
+  background: var(--status-error-bg);
+  border: 1px solid var(--status-error-border);
+  color: var(--status-error-text);
   border-radius: 8px;
   padding: 10px 14px;
   font-size: 0.84rem;
