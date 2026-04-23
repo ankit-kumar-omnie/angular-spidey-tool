@@ -206,3 +206,64 @@
     margin: 0 16px;
   }
 }
+
+/* ── Spidey theme ── */
+[data-theme='spidey'] .token-btn {
+  background: #1a0505;
+  border-color: #3d1a1a;
+  color: #f5f0f0;
+}
+
+[data-theme='spidey'] .token-btn:hover {
+  border-color: #e63946;
+  box-shadow: 0 0 0 3px rgba(230,57,70,0.2);
+}
+
+[data-theme='spidey'] .modal-overlay {
+  background: rgba(0,0,0,0.7);
+}
+
+[data-theme='spidey'] .modal {
+  background: #1a0505;
+  border-color: #e63946;
+  box-shadow: 0 8px 40px rgba(230,57,70,0.3);
+}
+
+[data-theme='spidey'] .modal h3 {
+  color: #e63946;
+  text-shadow: 0 0 10px rgba(230,57,70,0.4);
+}
+
+[data-theme='spidey'] .modal-field input,
+[data-theme='spidey'] .modal-field textarea {
+  background: #0d0d0d;
+  border-color: #3d1a1a;
+  color: #f5f0f0;
+}
+
+[data-theme='spidey'] .modal-field input:focus,
+[data-theme='spidey'] .modal-field textarea:focus {
+  border-color: #e63946;
+  box-shadow: 0 0 0 3px rgba(230,57,70,0.25);
+}
+
+[data-theme='spidey'] .modal-actions button {
+  background: #220a0a;
+  border-color: #3d1a1a;
+  color: #f5f0f0;
+}
+
+[data-theme='spidey'] .modal-actions button:hover {
+  border-color: #e63946;
+}
+
+[data-theme='spidey'] .modal-actions .save-btn {
+  background: linear-gradient(135deg, #e63946, #b91c2a);
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(230,57,70,0.4);
+}
+
+[data-theme='spidey'] .modal-actions .save-btn:hover {
+  background: linear-gradient(135deg, #ff6b6b, #e63946);
+  box-shadow: 0 6px 20px rgba(230,57,70,0.55);
+}

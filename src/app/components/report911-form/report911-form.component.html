@@ -17,10 +17,41 @@
       </div>
       <div class="form-group">
         <label>DE Name</label>
-        <select required [ngModel]="lookup().deName" (ngModelChange)="setLookupField('deName',$event)">
-          <option value="">Select DE...</option>
-          @for (d of deOptions(); track d) { <option [value]="d">{{ d }}</option> }
-        </select>
+        <div class="de-checkbox-select" #lookupDeContainer>
+          <div class="de-checkbox-trigger" (click)="toggleLookupDeDropdown()">
+            @if (!lookup().deName) {
+              <span class="de-placeholder">Select DE...</span>
+            } @else {
+              <span class="de-single-val">{{ lookup().deName }}</span>
+            }
+            <span class="de-arrow">{{ lookupDeOpen() ? '▴' : '▾' }}</span>
+          </div>
+          @if (lookupDeOpen()) {
+            <div class="de-dropdown">
+              <input
+                class="de-search"
+                placeholder="Search DE names..."
+                [ngModel]="lookupDeSearch()"
+                (ngModelChange)="lookupDeSearch.set($event)"
+                (click)="$event.stopPropagation()"
+                autofocus />
+              <div class="de-options">
+                @if (!filteredLookupDeOptions.length) {
+                  <p class="de-empty">No results</p>
+                }
+                @for (d of filteredLookupDeOptions; track d) {
+                  <div
+                    class="de-option"
+                    [class.de-option--selected]="d === lookup().deName"
+                    (mousedown)="$event.preventDefault(); selectLookupDe(d)">
+                    <span class="de-option-check">{{ d === lookup().deName ? '✓' : '' }}</span>
+                    {{ d }}
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
       </div>
       <div class="form-group">
         <label>Program Year</label>

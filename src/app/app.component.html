@@ -1,6 +1,45 @@
 <div class="app">
   <app-loader />
   <app-snackbar />
+
+  <!-- ── SPIDEY 3D SCENE (only renders in spidey theme) ── -->
+  @if (theme.theme() === 'spidey') {
+    <div class="spidey-scene" aria-hidden="true">
+      <!-- Floating orbs -->
+      <div class="spidey-orb spidey-orb--1"></div>
+      <div class="spidey-orb spidey-orb--2"></div>
+      <div class="spidey-orb spidey-orb--3"></div>
+      <!-- Web strands from top -->
+      <div class="web-strand web-strand--1"><div class="web-drop"></div></div>
+      <div class="web-strand web-strand--2"><div class="web-drop"></div></div>
+      <div class="web-strand web-strand--3"><div class="web-drop"></div></div>
+      <div class="web-strand web-strand--4"><div class="web-drop"></div></div>
+      <!-- 3D spinning web emblem top-right -->
+      <div class="web-emblem">
+        <div class="web-emblem-inner">
+          <svg viewBox="0 0 100 100" class="web-svg">
+            <!-- Radial lines -->
+            <line x1="50" y1="50" x2="50"  y2="2"  stroke="#e63946" stroke-width="0.8" opacity="0.6"/>
+            <line x1="50" y1="50" x2="85"  y2="15" stroke="#e63946" stroke-width="0.8" opacity="0.6"/>
+            <line x1="50" y1="50" x2="98"  y2="50" stroke="#e63946" stroke-width="0.8" opacity="0.6"/>
+            <line x1="50" y1="50" x2="85"  y2="85" stroke="#e63946" stroke-width="0.8" opacity="0.6"/>
+            <line x1="50" y1="50" x2="50"  y2="98" stroke="#e63946" stroke-width="0.8" opacity="0.6"/>
+            <line x1="50" y1="50" x2="15"  y2="85" stroke="#e63946" stroke-width="0.8" opacity="0.6"/>
+            <line x1="50" y1="50" x2="2"   y2="50" stroke="#e63946" stroke-width="0.8" opacity="0.6"/>
+            <line x1="50" y1="50" x2="15"  y2="15" stroke="#e63946" stroke-width="0.8" opacity="0.6"/>
+            <!-- Concentric rings -->
+            <circle cx="50" cy="50" r="12" fill="none" stroke="#e63946" stroke-width="0.7" opacity="0.5"/>
+            <circle cx="50" cy="50" r="24" fill="none" stroke="#e63946" stroke-width="0.7" opacity="0.45"/>
+            <circle cx="50" cy="50" r="36" fill="none" stroke="#e63946" stroke-width="0.7" opacity="0.35"/>
+            <circle cx="50" cy="50" r="48" fill="none" stroke="#e63946" stroke-width="0.7" opacity="0.25"/>
+            <!-- Center dot -->
+            <circle cx="50" cy="50" r="3" fill="#e63946" opacity="0.9"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  }
+
   <header class="app-header">
     <img class="app-logo" src="/assets/informed-logo.svg" alt="Informed logo" />
     <div class="tool-switcher-wrapper">
@@ -42,36 +81,34 @@
   class="theme-toggle-btn"
   type="button"
   (click)="toggleTheme()"
-  [attr.aria-label]="
-    theme.theme() === 'dark'
-      ? 'Switch to light mode'
-      : 'Switch to dark mode'
-  "
+  [title]="themeLabel()"
+  [attr.aria-label]="themeLabel()"
 >
-  @if (theme.theme() === 'dark') {
-    <!-- Sun Icon -->
-    <svg xmlns="http://www.w3.org/2000/svg"
-         class="icon"
-         fill="none"
-         viewBox="0 0 24 24"
-         stroke="currentColor">
-      <path stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364 6.364l-1.414-1.414M6.05 6.05 4.636 4.636m12.728 0-1.414 1.414M6.05 17.95l-1.414 1.414"/>
+  @if (theme.theme() === 'light') {
+    <!-- Moon — switch to dark -->
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+    </svg>
+  } @else if (theme.theme() === 'dark') {
+    <!-- Spider — switch to spidey -->
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" fill="currentColor">
+      <circle cx="12" cy="9" r="3"/>
+      <path d="M12 12c-3 0-5 2-5 4h10c0-2-2-4-5-4z"/>
+      <line x1="12" y1="6" x2="6"  y2="2"  stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="12" y1="6" x2="18" y2="2"  stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="7"  y1="13" x2="2" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="17" y1="13" x2="22" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="7"  y1="15" x2="2" y2="18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="17" y1="15" x2="22" y2="18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="9"  y1="16" x2="7" y2="21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="15" y1="16" x2="17" y2="21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
     </svg>
   } @else {
-    <!-- Moon Icon -->
-    <svg xmlns="http://www.w3.org/2000/svg"
-         class="icon"
-         fill="none"
-         viewBox="0 0 24 24"
-         stroke="currentColor">
-      <path stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M21 12.79A9 9 0 1111.21 3
-               7 7 0 0021 12.79z"/>
+    <!-- Sun — switch back to light -->
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364 6.364l-1.414-1.414M6.05 6.05 4.636 4.636m12.728 0-1.414 1.414M6.05 17.95l-1.414 1.414"/>
     </svg>
   }
 </button>

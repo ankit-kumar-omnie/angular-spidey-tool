@@ -89,3 +89,30 @@
 @media (max-width: 480px) {
   .rc-results-filters { grid-template-columns: 1fr; }
 }
+
+/* ── Spidey theme ── */
+[data-theme='spidey'] .rc-results-filters { border-bottom-color: #3d1a1a; }
+
+[data-theme='spidey'] .filter-group input,
+[data-theme='spidey'] .filter-group select {
+  background: #1a0505;
+  border-color: #3d1a1a;
+  color: #f5f0f0;
+}
+
+[data-theme='spidey'] .filter-group input:focus,
+[data-theme='spidey'] .filter-group select:focus {
+  border-color: #e63946;
+  box-shadow: 0 0 0 3px rgba(230,57,70,0.25);
+}
+
+[data-theme='spidey'] .search-btn {
+  background: linear-gradient(135deg, #e63946, #b91c2a);
+  box-shadow: 0 4px 14px rgba(230,57,70,0.4);
+}
+
+[data-theme='spidey'] .search-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ff6b6b, #e63946);
+  box-shadow: 0 6px 18px rgba(230,57,70,0.55);
+  transform: translateY(-1px);
+}

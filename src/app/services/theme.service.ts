@@ -1,13 +1,13 @@
 import { Injectable, signal } from '@angular/core';
 
-type ThemeMode = 'light' | 'dark';
+export type ThemeMode = 'light' | 'dark' | 'spidey';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class ThemeService {
   private readonly storageKey = 'spidey-theme';
   readonly theme = signal<ThemeMode>('light');
+
+  private readonly cycle: ThemeMode[] = ['light', 'dark', 'spidey'];
 
   initTheme(): void {
     const saved = localStorage.getItem(this.storageKey) as ThemeMode | null;
@@ -17,7 +17,9 @@ export class ThemeService {
   }
 
   toggleTheme(): void {
-    this.setTheme(this.theme() === 'dark' ? 'light' : 'dark');
+    const current = this.theme();
+    const next = this.cycle[(this.cycle.indexOf(current) + 1) % this.cycle.length];
+    this.setTheme(next);
   }
 
   private setTheme(mode: ThemeMode): void {

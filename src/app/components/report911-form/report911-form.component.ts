@@ -21,6 +21,7 @@ type Mode = 'copy' | 'unReport' | 'activation' | 'lookup' | 'results';
 export class Report911FormComponent implements OnInit {
   @Output() success = new EventEmitter<CommandResult | CommandResult[]>();
   @ViewChild('deDropdownContainer') deDropdownContainer?: ElementRef<HTMLElement>;
+  @ViewChild('lookupDeContainer')   lookupDeContainer?: ElementRef<HTMLElement>;
 
   mode = signal<Mode>('copy');
   quarters = QUARTERS;
@@ -30,6 +31,10 @@ export class Report911FormComponent implements OnInit {
   deOptions = signal<string[]>(DE_NAMES);
   deSearch = signal('');
   deDropdownOpen = signal(false);
+
+  // Lookup DE search
+  lookupDeSearch = signal('');
+  lookupDeOpen   = signal(false);
 
   form = signal({
     deNames: [] as string[],
@@ -68,17 +73,40 @@ export class Report911FormComponent implements OnInit {
     return this.deOptions().filter(d => d.toLowerCase().includes(s));
   }
 
+  get filteredLookupDeOptions(): string[] {
+    const s = this.lookupDeSearch().toLowerCase();
+    return this.deOptions().filter(d => d.toLowerCase().includes(s));
+  }
+
   toggleDeDropdown(): void {
     this.deDropdownOpen.update(o => !o);
   }
 
+  toggleLookupDeDropdown(): void {
+    this.lookupDeOpen.update(o => !o);
+    if (this.lookupDeOpen()) this.lookupDeSearch.set('');
+  }
+
+  selectLookupDe(name: string): void {
+    this.lookup.update(l => ({ ...l, deName: name }));
+    this.lookupDeOpen.set(false);
+    this.lookupDeSearch.set('');
+  }
+
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
-    if (!this.deDropdownOpen()) return;
     const target = event.target as Node | null;
-    const container = this.deDropdownContainer?.nativeElement;
-    if (container && target && !container.contains(target)) {
-      this.deDropdownOpen.set(false);
+    if (this.deDropdownOpen()) {
+      const container = this.deDropdownContainer?.nativeElement;
+      if (container && target && !container.contains(target)) {
+        this.deDropdownOpen.set(false);
+      }
+    }
+    if (this.lookupDeOpen()) {
+      const container = this.lookupDeContainer?.nativeElement;
+      if (container && target && !container.contains(target)) {
+        this.lookupDeOpen.set(false);
+      }
     }
   }
 

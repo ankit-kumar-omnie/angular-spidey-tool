@@ -166,3 +166,31 @@
   .result-card-header { flex-direction: column; align-items: flex-start; }
   .result-id { flex-direction: column; align-items: flex-start; gap: 4px; }
 }
+
+/* ── Spidey theme ── */
+[data-theme='spidey'] .result-card {
+  background: linear-gradient(145deg, #1a0505 0%, #220a0a 100%);
+  border-color: #3d1a1a;
+  box-shadow: 0 4px 20px rgba(230,57,70,0.18);
+}
+
+[data-theme='spidey'] .result-card:hover {
+  border-color: #e63946;
+  box-shadow: 0 6px 28px rgba(230,57,70,0.32);
+}
+
+[data-theme='spidey'] .result-id code {
+  color: #ff8a8a;
+  text-shadow: 0 0 6px rgba(230,57,70,0.35);
+}
+
+[data-theme='spidey'] .refresh-btn {
+  border-color: #3d1a1a;
+  color: #b0a0a0;
+}
+
+[data-theme='spidey'] .refresh-btn:hover:not(:disabled) {
+  background: rgba(230,57,70,0.12);
+  color: #e63946;
+  border-color: #e63946;
+}

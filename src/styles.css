@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* ============================================================
-   GLOBAL — Dark mode aware design tokens
+   GLOBAL — Design tokens (light / dark / spidey)
    ============================================================ */
 
 *, *::before, *::after {
@@ -10,6 +10,7 @@
   padding: 0;
 }
 
+/* ── LIGHT ── */
 :root,
 [data-theme='light'] {
   --bg-primary:    #f5f7fb;
@@ -24,7 +25,6 @@
   --shadow-card:   0 4px 20px rgba(15,23,42,0.08);
   --focus-ring:    0 0 0 3px rgba(91,91,214,0.22);
 
-  /* Status — light */
   --status-success-bg:     #f0fdf4;
   --status-success-border: #bbf7d0;
   --status-success-text:   #166534;
@@ -38,11 +38,11 @@
   --status-info-border:    #bfdbfe;
   --status-info-text:      #1d4ed8;
 
-  /* Case list text */
-  --case-item-text:        #374151;
-  --case-title-text:       #111827;
+  --case-item-text:  #374151;
+  --case-title-text: #111827;
 }
 
+/* ── DARK ── */
 [data-theme='dark'] {
   --bg-primary:    #0f172a;
   --bg-secondary:  #1e293b;
@@ -56,7 +56,6 @@
   --shadow-card:   0 4px 20px rgba(0,0,0,0.4);
   --focus-ring:    0 0 0 3px rgba(129,140,248,0.28);
 
-  /* Status — dark (softer tones) */
   --status-success-bg:     rgba(22,101,52,0.18);
   --status-success-border: rgba(134,239,172,0.25);
   --status-success-text:   #86efac;
@@ -70,11 +69,78 @@
   --status-info-border:    rgba(191,219,254,0.25);
   --status-info-text:      #93c5fd;
 
-  /* Case list text */
-  --case-item-text:        #cbd5e1;
-  --case-title-text:       #e2e8f0;
+  --case-item-text:  #cbd5e1;
+  --case-title-text: #e2e8f0;
 }
 
+/* ── SPIDEY ── */
+[data-theme='spidey'] {
+  --bg-primary:    #0d0d0d;
+  --bg-secondary:  #1a0a0a;
+  --bg-elevated:   #220e0e;
+  --text-primary:  #f5f0f0;
+  --text-secondary:#b0a0a0;
+  --border-color:  #3d1a1a;
+  --accent:        #e63946;
+  --accent-hover:  #ff6b6b;
+  --shadow-soft:   0 2px 16px rgba(230,57,70,0.18);
+  --shadow-card:   0 4px 24px rgba(230,57,70,0.22);
+  --focus-ring:    0 0 0 3px rgba(230,57,70,0.35);
+
+  --status-success-bg:     rgba(22,101,52,0.20);
+  --status-success-border: rgba(134,239,172,0.22);
+  --status-success-text:   #86efac;
+  --status-warning-bg:     rgba(133,77,14,0.20);
+  --status-warning-border: rgba(253,230,138,0.22);
+  --status-warning-text:   #fde68a;
+  --status-error-bg:       rgba(230,57,70,0.18);
+  --status-error-border:   rgba(230,57,70,0.35);
+  --status-error-text:     #ff8a8a;
+  --status-info-bg:        rgba(230,57,70,0.12);
+  --status-info-border:    rgba(230,57,70,0.28);
+  --status-info-text:      #ffb3b3;
+
+  --case-item-text:  #d4b8b8;
+  --case-title-text: #f5f0f0;
+}
+
+/* ── Spidey body — web pattern background ── */
+[data-theme='spidey'] body {
+  background-color: #0d0d0d;
+  background-image:
+    /* Radial red glow spots */
+    radial-gradient(ellipse at 10% 15%, rgba(230,57,70,0.18) 0%, transparent 45%),
+    radial-gradient(ellipse at 90% 80%, rgba(180,20,30,0.14) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 50%, rgba(230,57,70,0.06) 0%, transparent 70%),
+    /* Spider web lines — concentric arcs via repeating-conic */
+    repeating-conic-gradient(
+      from 0deg at 50% -20%,
+      transparent 0deg,
+      transparent 11.2deg,
+      rgba(230,57,70,0.07) 11.2deg,
+      rgba(230,57,70,0.07) 11.6deg
+    ),
+    /* Radial web rings */
+    repeating-radial-gradient(
+      circle at 50% -10%,
+      transparent 0px,
+      transparent 88px,
+      rgba(230,57,70,0.06) 88px,
+      rgba(230,57,70,0.06) 90px
+    );
+  background-attachment: fixed;
+}
+
+/* ── Spidey scrollbar ── */
+[data-theme='spidey'] ::-webkit-scrollbar-thumb {
+  background: #e63946;
+}
+
+[data-theme='spidey'] ::-webkit-scrollbar-thumb:hover {
+  background: #ff6b6b;
+}
+
+/* ── Dark body gradient ── */
 [data-theme='dark'] body {
   background-image:
     radial-gradient(circle at 15% 20%, rgba(59,130,246,0.12), transparent 38%),
@@ -89,7 +155,7 @@ body {
   color: var(--text-primary);
   min-height: 100vh;
   line-height: 1.5;
-  transition: background 0.25s ease, color 0.25s ease;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 input, select, textarea, button { font-family: inherit; }

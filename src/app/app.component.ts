@@ -84,6 +84,11 @@ export class AppComponent {
   toggleToolMenu() { this.toolMenuOpen.update(o => !o); }
   toggleTheme() { this.theme.toggleTheme(); }
 
+  themeLabel() {
+    const next = { light: 'Switch to Dark', dark: 'Switch to Spidey 🕷', spidey: 'Switch to Light' };
+    return next[this.theme.theme()];
+  }
+
   onTokenSave(token: string) {
     this.auth.setToken(token);
     if (token) {
