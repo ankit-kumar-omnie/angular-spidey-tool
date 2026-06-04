@@ -27,7 +27,7 @@ export interface EventRecord {
 }
 
 export type EventEnvPrefix = 'staging' | 'alpha' | 'migration';
-export type AggregateType = 'fundAccount' | 'record' | 'case' | 'caseService' | 'authorization' | 'Report911';
+export type AggregateType = 'fundAccount' | 'record' | 'case' | 'caseService' | 'authorization' | 'Report911' | 'dataCollection' | 'payment';
 
 export const ENV_PREFIXES: { value: EventEnvPrefix; label: string }[] = [
   { value: 'staging',   label: 'Test' },
@@ -40,7 +40,9 @@ export const AGGREGATE_TYPES: { value: AggregateType; label: string }[] = [
   { value: 'record',        label: 'Record' },
   { value: 'case',          label: 'Case' },
   { value: 'authorization', label: 'Authorization' },
-  {value: "Report911", label:"Report 911"}
+  { value: 'Report911',     label: 'Report 911' },
+  { value: 'dataCollection', label: 'Data Collection' },
+  { value: 'payment',       label: 'Payment' },
 ];
 
 @Injectable({ providedIn: 'root' })
@@ -54,7 +56,7 @@ export class EventStoreService {
    * Builds the stream ID: {env}:{tenant}:{aggregateType}-{aggregateId}
    * e.g. alpha:azrsa:fundAccount-4513eac7-d9cf-4972-966e-d67eece5a37e
    */
-  buildStreamId(env: EventEnvPrefix, tenant: string, aggregate: AggregateType, id: string): string {
+  buildStreamId(env: EventEnvPrefix, tenant: string, aggregate: AggregateType | string, id: string): string {
     return `${env}:${tenant.trim()}:${aggregate}-${id.trim()}`;
   }
 

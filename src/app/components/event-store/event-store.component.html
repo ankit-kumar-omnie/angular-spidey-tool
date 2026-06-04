@@ -94,18 +94,30 @@
       </div>
 
       <!-- Aggregate type -->
-      <div class="es-field">
+      <div class="es-field es-field--aggregate">
         <label>Aggregate Type</label>
         <div class="es-seg-group es-seg-group--wrap">
           @for (a of aggregateTypes; track a.value) {
             <button type="button"
               class="es-seg-btn"
-              [class.active]="aggregate() === a.value"
-              (click)="aggregate.set(a.value)">
+              [class.active]="aggregatePreset() === a.value"
+              (click)="selectAggregatePreset(a.value)">
               {{ a.label }}
             </button>
           }
+          <button type="button"
+            class="es-seg-btn"
+            [class.active]="aggregatePreset() === customAggregateKey"
+            (click)="selectCustomAggregate()">
+            Custom
+          </button>
         </div>
+        @if (aggregatePreset() === customAggregateKey) {
+          <input class="es-input es-input--mono es-custom-aggregate-input"
+            placeholder="e.g. caseService"
+            [ngModel]="customAggregate()"
+            (ngModelChange)="setCustomAggregate($event)" />
+        }
       </div>
 
       <!-- Aggregate ID -->
@@ -132,7 +144,7 @@
 
     <div class="es-actions">
       <button class="es-fetch-btn"
-        [disabled]="loading() || !aggregateId().trim() || !hasTokenContext()"
+        [disabled]="loading() || !aggregateId().trim() || !hasTokenContext() || !effectiveAggregate()"
         (click)="fetchEvents()">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>

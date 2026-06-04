@@ -20,6 +20,8 @@ const JWT_ENV_TO_PREFIX: Record<string, EventEnvPrefix> = {
   Migration: 'migration',
 };
 
+const CUSTOM_AGGREGATE = '__custom__' as const;
+
 const JWT_ENV_LABELS: Record<string, string> = {
   Test: 'Test',
   Staging: 'Staging',
@@ -41,8 +43,17 @@ export class EventStoreComponent {
   private auth     = inject(AuthService);
 
   // ── Editable form state (env + tenant come from JWT only)
-  aggregate   = signal<AggregateType>('fundAccount');
-  aggregateId = signal('');
+  aggregatePreset = signal<AggregateType | typeof CUSTOM_AGGREGATE>('fundAccount');
+  customAggregate = signal('');
+  aggregateId     = signal('');
+
+  /** Preset or temporary custom aggregate name for stream ID */
+  effectiveAggregate = computed(() => {
+    if (this.aggregatePreset() === CUSTOM_AGGREGATE) {
+      return this.customAggregate().trim();
+    }
+    return this.aggregatePreset();
+  });
 
   /** Stream prefix from JWT (staging / alpha / migration) */
   tokenEnvPrefix = computed((): EventEnvPrefix | null => {
@@ -84,7 +95,7 @@ export class EventStoreComponent {
     const env = this.tokenEnvPrefix();
     const tenant = this.tokenTenant().trim();
     const id = this.aggregateId().replace(/^["']|["']$/g, '').trim();
-    const agg = this.aggregate();
+    const agg = this.effectiveAggregate();
     if (!env || !tenant) {
       return `${env ?? '<env>'}:${tenant || '<tenant>'}:${agg}-<guid>`;
     }
@@ -142,6 +153,20 @@ export class EventStoreComponent {
   });
 
   // ── Methods
+  readonly customAggregateKey = CUSTOM_AGGREGATE;
+
+  selectAggregatePreset(value: AggregateType): void {
+    this.aggregatePreset.set(value);
+  }
+
+  selectCustomAggregate(): void {
+    this.aggregatePreset.set(CUSTOM_AGGREGATE);
+  }
+
+  setCustomAggregate(val: string): void {
+    this.customAggregate.set(val.replace(/[^a-zA-Z0-9]/g, ''));
+  }
+
   setAggregateId(val: string): void {
     this.aggregateId.set(val.replace(/["']/g, '').trim());
   }
@@ -214,7 +239,7 @@ export class EventStoreComponent {
     const blob   = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url    = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
-    const name   = `events-${this.aggregate()}-${this.aggregateId().slice(0, 8) || 'stream'}-${Date.now()}.json`;
+    const name   = `events-${this.effectiveAggregate()}-${this.aggregateId().slice(0, 8) || 'stream'}-${Date.now()}.json`;
     anchor.href     = url;
     anchor.download = name;
     anchor.click();

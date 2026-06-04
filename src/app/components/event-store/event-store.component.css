@@ -324,6 +324,16 @@
   overflow: hidden;
 }
 
+.es-field--aggregate {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.es-custom-aggregate-input {
+  margin-top: 2px;
+}
+
 .es-seg-group--wrap {
   flex-wrap: wrap;
   border: none;
