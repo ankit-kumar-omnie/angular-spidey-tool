@@ -529,6 +529,51 @@
   flex-shrink: 0;
 }
 
+.es-filter-dates {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.es-filter-date-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.es-filter-date-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.es-date-input {
+  width: 148px;
+  padding: 8px 10px;
+  font-size: 0.82rem;
+}
+
+.es-date-clear-btn {
+  align-self: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.es-date-clear-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .es-filter-count {
   font-size: 0.75rem;
   color: var(--text-secondary);

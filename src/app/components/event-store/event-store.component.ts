@@ -82,8 +82,10 @@ export class EventStoreComponent {
   error      = signal<string | null>(null);
   events     = signal<EventRecord[]>([]);
   expanded   = signal<Set<string>>(new Set());
-  filterText = signal('');
-  filterType = signal('');       // filter by event type dropdown
+  filterText     = signal('');
+  filterType     = signal('');
+  filterDateFrom = signal('');
+  filterDateTo   = signal('');
   searched   = signal(false);
   currentPage = signal(1);
 
@@ -110,11 +112,31 @@ export class EventStoreComponent {
     return Array.from(types).sort();
   });
 
-  // ── Filtered events (text + type)
+  hasActiveFilters = computed(() =>
+    !!this.filterText().trim() ||
+    !!this.filterType().trim() ||
+    !!this.filterDateFrom() ||
+    !!this.filterDateTo()
+  );
+
+  // ── Filtered events (text + type + date range)
   filteredEvents = computed(() => {
     let result = this.events();
     const type = this.filterType().trim();
     if (type) result = result.filter(ev => ev.type === type);
+
+    const from = this.dayStart(this.filterDateFrom());
+    const to = this.dayEnd(this.filterDateTo());
+    if (from || to) {
+      result = result.filter(ev => {
+        const created = this.eventCreatedAt(ev);
+        if (!created) return false;
+        if (from && created < from) return false;
+        if (to && created > to) return false;
+        return true;
+      });
+    }
+
     const q = this.filterText().toLowerCase().trim();
     if (q) result = result.filter(ev =>
       ev.type.toLowerCase().includes(q) ||
@@ -177,6 +199,8 @@ export class EventStoreComponent {
     this.expanded.set(new Set());
     this.filterText.set('');
     this.filterType.set('');
+    this.filterDateFrom.set('');
+    this.filterDateTo.set('');
     this.currentPage.set(1);
     this.loading.set(true);
     this.searched.set(false);
@@ -210,6 +234,31 @@ export class EventStoreComponent {
   nextPage(): void { this.goToPage(this.currentPage() + 1); }
 
   onFilterChange(): void { this.currentPage.set(1); }
+
+  clearDateFilter(): void {
+    this.filterDateFrom.set('');
+    this.filterDateTo.set('');
+    this.onFilterChange();
+  }
+
+  private eventCreatedAt(ev: EventRecord): Date | null {
+    const raw = ev.data?.createdAt;
+    if (!raw) return null;
+    const d = new Date(raw);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+
+  private dayStart(dateStr: string): Date | null {
+    if (!dateStr) return null;
+    const d = new Date(`${dateStr}T00:00:00`);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+
+  private dayEnd(dateStr: string): Date | null {
+    if (!dateStr) return null;
+    const d = new Date(`${dateStr}T23:59:59.999`);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
 
   toggleExpand(id: string): void {
     this.expanded.update(s => {

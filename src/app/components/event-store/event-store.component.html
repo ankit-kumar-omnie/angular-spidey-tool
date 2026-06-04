@@ -163,7 +163,7 @@
             <line x1="12" y1="15" x2="12" y2="3"/>
           </svg>
           Export JSON
-          @if (filterText() || filterType()) {
+          @if (hasActiveFilters()) {
             <span class="es-export-filtered">(filtered)</span>
           }
         </button>
@@ -201,6 +201,25 @@
           <option [value]="t">{{ t }}</option>
         }
       </select>
+
+      <!-- Date range -->
+      <div class="es-filter-dates">
+        <label class="es-filter-date-field">
+          <span class="es-filter-date-label">From</span>
+          <input type="date" class="es-input es-date-input"
+            [ngModel]="filterDateFrom()"
+            (ngModelChange)="filterDateFrom.set($event); onFilterChange()" />
+        </label>
+        <label class="es-filter-date-field">
+          <span class="es-filter-date-label">To</span>
+          <input type="date" class="es-input es-date-input"
+            [ngModel]="filterDateTo()"
+            (ngModelChange)="filterDateTo.set($event); onFilterChange()" />
+        </label>
+        @if (filterDateFrom() || filterDateTo()) {
+          <button type="button" class="es-date-clear-btn" (click)="clearDateFilter()" title="Clear dates">✕</button>
+        }
+      </div>
 
       <span class="es-filter-count">
         {{ filteredEvents().length }} / {{ events().length }}
