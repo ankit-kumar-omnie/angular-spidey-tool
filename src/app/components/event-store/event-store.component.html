@@ -204,20 +204,38 @@
 
       <!-- Date range -->
       <div class="es-filter-dates">
-        <label class="es-filter-date-field">
-          <span class="es-filter-date-label">From</span>
-          <input type="date" class="es-input es-date-input"
-            [ngModel]="filterDateFrom()"
-            (ngModelChange)="filterDateFrom.set($event); onFilterChange()" />
-        </label>
-        <label class="es-filter-date-field">
-          <span class="es-filter-date-label">To</span>
-          <input type="date" class="es-input es-date-input"
-            [ngModel]="filterDateTo()"
-            (ngModelChange)="filterDateTo.set($event); onFilterChange()" />
-        </label>
-        @if (filterDateFrom() || filterDateTo()) {
-          <button type="button" class="es-date-clear-btn" (click)="clearDateFilter()" title="Clear dates">✕</button>
+        <div class="es-filter-datetime-group">
+          <label class="es-filter-date-field">
+            <span class="es-filter-date-label">From Date</span>
+            <input type="date" class="es-input es-date-input"
+              [ngModel]="filterDateFrom()"
+              (ngModelChange)="filterDateFrom.set($event); onFilterChange()" />
+          </label>
+          <label class="es-filter-date-field">
+            <span class="es-filter-date-label">From Time</span>
+            <input type="time" step="1" class="es-input es-time-input"
+              [ngModel]="filterTimeFrom()"
+              (ngModelChange)="filterTimeFrom.set($event); onFilterChange()"
+              placeholder="00:00:00" />
+          </label>
+        </div>
+        <div class="es-filter-datetime-group">
+          <label class="es-filter-date-field">
+            <span class="es-filter-date-label">To Date</span>
+            <input type="date" class="es-input es-date-input"
+              [ngModel]="filterDateTo()"
+              (ngModelChange)="filterDateTo.set($event); onFilterChange()" />
+          </label>
+          <label class="es-filter-date-field">
+            <span class="es-filter-date-label">To Time</span>
+            <input type="time" step="1" class="es-input es-time-input"
+              [ngModel]="filterTimeTo()"
+              (ngModelChange)="filterTimeTo.set($event); onFilterChange()"
+              placeholder="23:59:59" />
+          </label>
+        </div>
+        @if (filterDateFrom() || filterTimeFrom() || filterDateTo() || filterTimeTo()) {
+          <button type="button" class="es-date-clear-btn" (click)="clearDateFilter()" title="Clear date & time">✕</button>
         }
       </div>
 

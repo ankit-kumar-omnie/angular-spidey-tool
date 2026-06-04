@@ -85,7 +85,9 @@ export class EventStoreComponent {
   filterText     = signal('');
   filterType     = signal('');
   filterDateFrom = signal('');
+  filterTimeFrom = signal('');
   filterDateTo   = signal('');
+  filterTimeTo   = signal('');
   searched   = signal(false);
   currentPage = signal(1);
 
@@ -116,7 +118,9 @@ export class EventStoreComponent {
     !!this.filterText().trim() ||
     !!this.filterType().trim() ||
     !!this.filterDateFrom() ||
-    !!this.filterDateTo()
+    !!this.filterTimeFrom() ||
+    !!this.filterDateTo() ||
+    !!this.filterTimeTo()
   );
 
   // ── Filtered events (text + type + date range)
@@ -125,8 +129,8 @@ export class EventStoreComponent {
     const type = this.filterType().trim();
     if (type) result = result.filter(ev => ev.type === type);
 
-    const from = this.dayStart(this.filterDateFrom());
-    const to = this.dayEnd(this.filterDateTo());
+    const from = this.dateTimeStart(this.filterDateFrom(), this.filterTimeFrom());
+    const to = this.dateTimeEnd(this.filterDateTo(), this.filterTimeTo());
     if (from || to) {
       result = result.filter(ev => {
         const created = this.eventCreatedAt(ev);
@@ -200,7 +204,9 @@ export class EventStoreComponent {
     this.filterText.set('');
     this.filterType.set('');
     this.filterDateFrom.set('');
+    this.filterTimeFrom.set('');
     this.filterDateTo.set('');
+    this.filterTimeTo.set('');
     this.currentPage.set(1);
     this.loading.set(true);
     this.searched.set(false);
@@ -237,7 +243,9 @@ export class EventStoreComponent {
 
   clearDateFilter(): void {
     this.filterDateFrom.set('');
+    this.filterTimeFrom.set('');
     this.filterDateTo.set('');
+    this.filterTimeTo.set('');
     this.onFilterChange();
   }
 
@@ -248,15 +256,17 @@ export class EventStoreComponent {
     return Number.isNaN(d.getTime()) ? null : d;
   }
 
-  private dayStart(dateStr: string): Date | null {
+  private dateTimeStart(dateStr: string, timeStr: string): Date | null {
     if (!dateStr) return null;
-    const d = new Date(`${dateStr}T00:00:00`);
+    const time = timeStr || '00:00:00';
+    const d = new Date(`${dateStr}T${time}`);
     return Number.isNaN(d.getTime()) ? null : d;
   }
 
-  private dayEnd(dateStr: string): Date | null {
+  private dateTimeEnd(dateStr: string, timeStr: string): Date | null {
     if (!dateStr) return null;
-    const d = new Date(`${dateStr}T23:59:59.999`);
+    const time = timeStr || '23:59:59';
+    const d = new Date(`${dateStr}T${time}`);
     return Number.isNaN(d.getTime()) ? null : d;
   }
 
