@@ -7,6 +7,7 @@ const ENV_URL_MAP: Record<string, string> = {
   Test: 'https://test-api.informed.cloud/api',
   Staging: 'https://staging-api.informed.cloud/api',
   Production: 'https://api.informed.cloud/api',
+  Migration: 'https://migration-api.informed.cloud/api',
 };
 
 @Injectable({ providedIn: 'root' })
@@ -15,12 +16,21 @@ export class AuthService {
   readonly baseUrl = signal<string>(this._initBaseUrl());
 
   private _initBaseUrl(): string {
+    const storedToken = localStorage.getItem(TOKEN_KEY);
+    if (storedToken) {
+      const fromToken = this.urlForEnv(this.decodeEnv(storedToken));
+      if (fromToken) return fromToken;
+    }
     const cached = localStorage.getItem(BASE_URL_KEY);
     if (cached && !cached.includes('/api')) {
       localStorage.removeItem(BASE_URL_KEY);
-      return 'https://test-api.informed.cloud/api';
+      return ENV_URL_MAP['Test'];
     }
-    return cached || 'https://test-api.informed.cloud/api';
+    return cached || ENV_URL_MAP['Test'];
+  }
+
+  private urlForEnv(env: string): string {
+    return env ? (ENV_URL_MAP[env] ?? '') : '';
   }
 
   setToken(token: string): void {
@@ -28,7 +38,7 @@ export class AuthService {
     if (token) {
       localStorage.setItem(TOKEN_KEY, token);
       const env = this.decodeEnv(token);
-      const url = env ? ENV_URL_MAP[env] : this.baseUrl();
+      const url = this.urlForEnv(env) || this.baseUrl() || ENV_URL_MAP['Test'];
       this.baseUrl.set(url);
       localStorage.setItem(BASE_URL_KEY, url);
     } else {
@@ -61,13 +71,17 @@ export class AuthService {
     }
   }
 
-  decodeEnv(token: string): 'Test' | 'Staging' | 'Production' | '' {
+  decodeEnv(token: string): 'Test' | 'Staging' | 'Production' | 'Migration' | '' {
     try {
       const aud: string[] = JSON.parse(atob(token.split('.')[1])).aud ?? [];
       const a = Array.isArray(aud) ? aud : [aud];
-      if (a.some((x: string) => x.includes('-test'))) return 'Test';
-      if (a.some((x: string) => x.includes('-staging'))) return 'Staging';
-      if (a.some((x: string) => x.includes('-prod'))) return 'Production';
+      const has = (fn: (x: string) => boolean) => a.some(fn);
+      if (has(x => x.includes('migration') || x.includes('wy-prod') || x.includes('wyprod'))) {
+        return 'Migration';
+      }
+      if (has(x => x.includes('-test'))) return 'Test';
+      if (has(x => x.includes('-staging'))) return 'Staging';
+      if (has(x => x.includes('-prod'))) return 'Production';
       return '';
     } catch { return ''; }
   }

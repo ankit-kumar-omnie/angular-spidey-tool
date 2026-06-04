@@ -1,0 +1,309 @@
+<div class="es-root">
+
+  <!-- ── SPIDEY LOADER ── -->
+  @if (loading()) {
+    <div class="es-loader-overlay">
+      @if (theme.theme() === 'spidey') {
+        <div class="spidey-loader">
+          <div class="spidey-glow"></div>
+          <div class="web-scene">
+            <div class="web-ring web-ring--outer"></div>
+            <div class="web-ring web-ring--mid"></div>
+            <div class="web-ring web-ring--inner"></div>
+            <div class="web-3d-wrap">
+              <svg class="web-3d-svg" viewBox="0 0 120 120">
+                <line x1="60" y1="60" x2="60"  y2="4"   class="web-line"/>
+                <line x1="60" y1="60" x2="102" y2="18"  class="web-line"/>
+                <line x1="60" y1="60" x2="116" y2="60"  class="web-line"/>
+                <line x1="60" y1="60" x2="102" y2="102" class="web-line"/>
+                <line x1="60" y1="60" x2="60"  y2="116" class="web-line"/>
+                <line x1="60" y1="60" x2="18"  y2="102" class="web-line"/>
+                <line x1="60" y1="60" x2="4"   y2="60"  class="web-line"/>
+                <line x1="60" y1="60" x2="18"  y2="18"  class="web-line"/>
+                <circle cx="60" cy="60" r="14" class="web-circle"/>
+                <circle cx="60" cy="60" r="28" class="web-circle"/>
+                <circle cx="60" cy="60" r="42" class="web-circle"/>
+                <circle cx="60" cy="60" r="56" class="web-circle web-circle--outer"/>
+                <circle cx="60" cy="60" r="5"  class="web-center"/>
+                <circle cx="60" cy="60" r="5"  class="web-center-pulse"/>
+              </svg>
+            </div>
+            <div class="spider-drop-wrap">
+              <div class="spider-thread"></div>
+              <div class="spider-body">
+                <div class="spider-head"></div>
+                <div class="spider-abdomen"></div>
+                <div class="spider-legs">
+                  <span></span><span></span><span></span><span></span>
+                  <span></span><span></span><span></span><span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="spidey-loader-text">
+            <span class="spidey-loader-char" style="--i:0">F</span>
+            <span class="spidey-loader-char" style="--i:1">e</span>
+            <span class="spidey-loader-char" style="--i:2">t</span>
+            <span class="spidey-loader-char" style="--i:3">c</span>
+            <span class="spidey-loader-char" style="--i:4">h</span>
+            <span class="spidey-loader-char" style="--i:5">i</span>
+            <span class="spidey-loader-char" style="--i:6">n</span>
+            <span class="spidey-loader-char" style="--i:7">g</span>
+            <span class="spidey-loader-char" style="--i:8">.</span>
+            <span class="spidey-loader-char" style="--i:9">.</span>
+            <span class="spidey-loader-char" style="--i:10">.</span>
+          </p>
+        </div>
+      } @else {
+        <div class="es-default-loader">
+          <div class="es-spinner">
+            <div class="es-ring"></div>
+            <div class="es-ring"></div>
+            <div class="es-ring"></div>
+          </div>
+          <p class="es-loader-text">Fetching events…</p>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ── Build Stream ID form ── -->
+  <div class="es-builder">
+    <h3 class="es-builder-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      Event Stream Viewer
+    </h3>
+
+    <div class="es-form-grid">
+      <!-- Environment (from token, readonly) -->
+      <div class="es-field">
+        <label>Environment <span class="es-field-hint">from token</span></label>
+        <div class="es-readonly-value" [class.es-readonly-value--empty]="!tokenEnvPrefix()">
+          {{ envLabel() }}
+        </div>
+      </div>
+
+      <!-- Tenant (from token, readonly) -->
+      <div class="es-field">
+        <label>Tenant <span class="es-field-hint">from token</span></label>
+        <input class="es-input es-input--readonly" readonly
+          [value]="tokenTenant()"
+          placeholder="Set token to load tenant" />
+      </div>
+
+      <!-- Aggregate type -->
+      <div class="es-field">
+        <label>Aggregate Type</label>
+        <div class="es-seg-group es-seg-group--wrap">
+          @for (a of aggregateTypes; track a.value) {
+            <button type="button"
+              class="es-seg-btn"
+              [class.active]="aggregate() === a.value"
+              (click)="aggregate.set(a.value)">
+              {{ a.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Aggregate ID -->
+      <div class="es-field">
+        <label>Aggregate ID (GUID)</label>
+        <input class="es-input es-input--mono"
+          placeholder="4513eac7-d9cf-4972-966e-d67eece5a37e"
+          [ngModel]="aggregateId()"
+          (ngModelChange)="setAggregateId($event)" />
+      </div>
+    </div>
+
+    <!-- Stream ID preview -->
+    <div class="es-stream-preview">
+      <span class="es-stream-label">Stream ID</span>
+      <code class="es-stream-id" (click)="copyStreamId()" title="Click to copy">{{ streamId() }}</code>
+      <button class="es-copy-btn" (click)="copyStreamId()" title="Copy">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="es-actions">
+      <button class="es-fetch-btn"
+        [disabled]="loading() || !aggregateId().trim() || !hasTokenContext()"
+        (click)="fetchEvents()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        Fetch Events
+      </button>
+
+      @if (events().length) {
+        <span class="es-count-badge">{{ events().length }} event{{ events().length !== 1 ? 's' : '' }}</span>
+
+        <!-- Export button -->
+        <button class="es-export-btn" (click)="exportJson()" title="Export filtered events as JSON">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Export JSON
+          @if (filterText() || filterType()) {
+            <span class="es-export-filtered">(filtered)</span>
+          }
+        </button>
+      }
+    </div>
+
+    @if (error()) {
+      <p class="es-error">{{ error() }}</p>
+    }
+  </div>
+
+  <!-- ── Filter bar ── -->
+  @if (events().length) {
+    <div class="es-filter-bar">
+      <!-- Text search -->
+      <div class="es-filter-search">
+        <svg class="es-filter-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input class="es-input es-filter-input"
+          placeholder="Search type, ID, user, payload…"
+          [ngModel]="filterText()"
+          (ngModelChange)="filterText.set($event); onFilterChange()" />
+        @if (filterText()) {
+          <button class="es-filter-clear" (click)="filterText.set(''); onFilterChange()" title="Clear">✕</button>
+        }
+      </div>
+
+      <!-- Event type dropdown -->
+      <select class="es-input es-type-select"
+        [ngModel]="filterType()"
+        (ngModelChange)="filterType.set($event); onFilterChange()">
+        <option value="">All event types</option>
+        @for (t of eventTypes(); track t) {
+          <option [value]="t">{{ t }}</option>
+        }
+      </select>
+
+      <span class="es-filter-count">
+        {{ filteredEvents().length }} / {{ events().length }}
+      </span>
+    </div>
+  }
+
+  <!-- ── Event timeline ── -->
+  @if (pagedEvents().length) {
+    <div class="es-timeline">
+      @for (ev of pagedEvents(); track ev.id) {
+        <div class="es-event" [class.es-event--expanded]="expanded().has(ev.id)">
+
+          <div class="es-event-header" (click)="toggleExpand(ev.id)">
+            <div class="es-event-number">#{{ ev.number }}</div>
+            <div class="es-event-dot"></div>
+            <div class="es-event-meta">
+              <span class="es-event-type">{{ ev.type }}</span>
+              <span class="es-event-time">{{ ev.data.createdAt | date:'MMM d, y · HH:mm:ss' }}</span>
+            </div>
+            <div class="es-event-right">
+              @if (ev.data.userContext?.name) {
+                <span class="es-event-user">{{ ev.data.userContext!.name }}</span>
+              }
+              <span class="es-expand-icon">{{ expanded().has(ev.id) ? '▲' : '▼' }}</span>
+            </div>
+          </div>
+
+          @if (expanded().has(ev.id)) {
+            <div class="es-event-body">
+              <div class="es-meta-grid">
+                <div class="es-meta-item">
+                  <span class="es-meta-key">Event ID</span>
+                  <code class="es-meta-val es-copyable" (click)="copy(ev.id)" title="Copy">{{ ev.id }}</code>
+                </div>
+                <div class="es-meta-item">
+                  <span class="es-meta-key">Command ID</span>
+                  <code class="es-meta-val es-copyable" (click)="copy(ev.data.commandId)" title="Copy">{{ ev.data.commandId }}</code>
+                </div>
+                <div class="es-meta-item">
+                  <span class="es-meta-key">Created By</span>
+                  <code class="es-meta-val">{{ ev.data.createdBy }}</code>
+                </div>
+                <div class="es-meta-item">
+                  <span class="es-meta-key">Tenant</span>
+                  <code class="es-meta-val">{{ ev.data.tenantId }}</code>
+                </div>
+                @if (ev.data.userContext) {
+                  <div class="es-meta-item">
+                    <span class="es-meta-key">User</span>
+                    <code class="es-meta-val">{{ ev.data.userContext.name }} ({{ ev.data.userContext.id }})</code>
+                  </div>
+                  <div class="es-meta-item">
+                    <span class="es-meta-key">Request ID</span>
+                    <code class="es-meta-val es-copyable" (click)="copy(ev.data.userContext.requestId)" title="Copy">{{ ev.data.userContext.requestId }}</code>
+                  </div>
+                }
+              </div>
+              <div class="es-payload-wrap">
+                <div class="es-payload-header">
+                  <span class="es-payload-label">Payload</span>
+                  <button class="es-copy-payload-btn" (click)="copyPayload(ev)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    </svg>
+                    Copy JSON
+                  </button>
+                </div>
+                <pre class="es-payload">{{ ev.data.payload | json }}</pre>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- ── Pagination ── -->
+    @if (totalPages() > 1) {
+      <div class="es-pagination">
+        <button class="es-page-btn es-page-nav"
+          [disabled]="currentPage() === 1"
+          (click)="prevPage()" title="Previous">
+          ‹
+        </button>
+
+        @for (p of pageNumbers(); track $index) {
+          @if (p === '…') {
+            <span class="es-page-ellipsis">…</span>
+          } @else {
+            <button class="es-page-btn"
+              [class.active]="p === currentPage()"
+              (click)="goToPage(p)">
+              {{ p }}
+            </button>
+          }
+        }
+
+        <button class="es-page-btn es-page-nav"
+          [disabled]="currentPage() === totalPages()"
+          (click)="nextPage()" title="Next">
+          ›
+        </button>
+
+        <span class="es-page-info">
+          Page {{ currentPage() }} of {{ totalPages() }}
+          · {{ filteredEvents().length }} event{{ filteredEvents().length !== 1 ? 's' : '' }}
+        </span>
+      </div>
+    }
+
+  } @else if (events().length && !filteredEvents().length) {
+    <p class="es-empty">No events match your filter.</p>
+  } @else if (!loading() && searched()) {
+    <p class="es-empty">No events found for this stream.</p>
+  }
+
+</div>

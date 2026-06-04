@@ -15,12 +15,20 @@ import { ResultCardComponent } from './components/result-card/result-card.compon
 import { CopyResultCardComponent } from './components/copy-result-card/copy-result-card.component';
 import { LoaderComponent } from './components/loader/loader.component';
 import { SnackbarComponent } from './components/snackbar/snackbar.component';
+import { EventStoreComponent } from './components/event-store/event-store.component';
 
-type ActiveTool = 'report911' | 'recordCopy';
+type ActiveTool = 'report911' | 'recordCopy' | 'eventStore';
 
 const TOOL_LABELS: Record<ActiveTool, string> = {
-  report911: 'Report 911 SPIDEY Tool',
+  report911:  'Report 911 SPIDEY Tool',
   recordCopy: 'Record SPIDEY Tool',
+  eventStore: 'Event Store Viewer',
+};
+
+const TOOL_ICONS: Record<ActiveTool, string> = {
+  report911:  '📋',
+  recordCopy: '🗂️',
+  eventStore: '⚡',
 };
 
 @Component({
@@ -37,6 +45,7 @@ const TOOL_LABELS: Record<ActiveTool, string> = {
     CopyResultCardComponent,
     LoaderComponent,
     SnackbarComponent,
+    EventStoreComponent,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
@@ -45,6 +54,7 @@ export class AppComponent {
   activeTool = signal<ActiveTool>('report911');
   toolMenuOpen = signal(false);
   toolLabels = TOOL_LABELS;
+  toolIcons  = TOOL_ICONS;
   toolKeys = Object.keys(TOOL_LABELS) as ActiveTool[];
 
   submitted911 = signal<CommandResult[] | null>(null);

@@ -58,6 +58,7 @@
                 [class.active]="key === activeTool()"
                 (mousedown)="selectTool(key)"
               >
+                <span class="tool-switcher-icon">{{ toolIcons[key] }}</span>
                 {{ toolLabels[key] }}
               </button>
             }
@@ -169,5 +170,11 @@
         </div>
       </div>
     }
+  }  @if (activeTool() === "eventStore") {
+    <div class="card">
+      <p class="card-title">⚡ Event Store Viewer</p>
+      <app-event-store />
+    </div>
   }
+
 </div>

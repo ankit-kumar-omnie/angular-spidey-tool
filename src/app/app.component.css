@@ -255,7 +255,9 @@
 }
 
 .tool-switcher-item {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   width: 100%;
   text-align: left;
   padding: 12px 16px;
@@ -266,6 +268,13 @@
   border: none;
   cursor: pointer;
   transition: all 0.25s ease-in-out;
+}
+
+.tool-switcher-icon {
+  font-size: 1rem;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
 }
 
 .tool-switcher-item:hover {
