@@ -91,6 +91,10 @@ export class EventStoreComponent {
   searched   = signal(false);
   currentPage = signal(1);
 
+  // ── Sort state
+  sortField = signal<'number' | 'type' | 'date'>('number');
+  sortDir   = signal<'asc' | 'desc'>('asc');
+
   // ── Static options
   aggregateTypes = AGGREGATE_TYPES;
 
@@ -123,7 +127,7 @@ export class EventStoreComponent {
     !!this.filterTimeTo()
   );
 
-  // ── Filtered events (text + type + date range)
+  // ── Filtered + sorted events (text + type + date range + sort)
   filteredEvents = computed(() => {
     let result = this.events();
     const type = this.filterType().trim();
@@ -150,6 +154,24 @@ export class EventStoreComponent {
       ev.data.userContext?.id?.toLowerCase().includes(q) ||
       JSON.stringify(ev.data.payload).toLowerCase().includes(q)
     );
+
+    // ── Sort
+    const field = this.sortField();
+    const dir   = this.sortDir();
+    result = [...result].sort((a, b) => {
+      let cmp = 0;
+      if (field === 'number') {
+        cmp = (a.number ?? 0) - (b.number ?? 0);
+      } else if (field === 'type') {
+        cmp = a.type.localeCompare(b.type);
+      } else if (field === 'date') {
+        const da = this.eventCreatedAt(a)?.getTime() ?? 0;
+        const db = this.eventCreatedAt(b)?.getTime() ?? 0;
+        cmp = da - db;
+      }
+      return dir === 'asc' ? cmp : -cmp;
+    });
+
     return result;
   });
 
@@ -207,6 +229,8 @@ export class EventStoreComponent {
     this.filterTimeFrom.set('');
     this.filterDateTo.set('');
     this.filterTimeTo.set('');
+    this.sortField.set('number');
+    this.sortDir.set('asc');
     this.currentPage.set(1);
     this.loading.set(true);
     this.searched.set(false);
@@ -240,6 +264,17 @@ export class EventStoreComponent {
   nextPage(): void { this.goToPage(this.currentPage() + 1); }
 
   onFilterChange(): void { this.currentPage.set(1); }
+
+  setSort(field: 'number' | 'type' | 'date'): void {
+    if (this.sortField() === field) {
+      // cycle: asc → desc → asc
+      this.sortDir.update(d => d === 'asc' ? 'desc' : 'asc');
+    } else {
+      this.sortField.set(field);
+      this.sortDir.set('asc');
+    }
+    this.currentPage.set(1);
+  }
 
   clearDateFilter(): void {
     this.filterDateFrom.set('');
