@@ -2,8 +2,8 @@
   "name": "angular-spidey-tool",
   "version": "0.1.0",
   "scripts": {
-    "start": "ng serve",
-    "build": "ng build"
+   "start": "ng serve",
+   "build": "node ./node_modules/@angular/cli/bin/ng build"
   },
   "dependencies": {
     "@angular/animations": "^17.3.0",
