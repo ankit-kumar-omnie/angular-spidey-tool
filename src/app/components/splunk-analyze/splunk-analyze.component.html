@@ -1,0 +1,204 @@
+<div class="sa-root">
+  <!-- ── Builder ── -->
+  <div class="sa-builder">
+
+    <!-- Backend API -->
+    <span class="sa-section-title">Backend API</span>
+    <div class="sa-form-grid sa-form-grid--full">
+      <div class="sa-field">
+        <label>URL</label>
+        <input type="text" class="sa-input sa-input--mono" [ngModel]="backendUrl()" (ngModelChange)="backendUrl.set($event)" placeholder="http://localhost:3000/api" />
+      </div>
+    </div>
+
+    <div class="sa-divider"></div>
+
+    <!-- Splunk Connection -->
+    <span class="sa-section-title">Splunk Connection</span>
+    <div class="sa-form-grid">
+      <div class="sa-field">
+        <label>Host</label>
+        <input type="text" class="sa-input" [ngModel]="splunkHost()" (ngModelChange)="splunkHost.set($event)" placeholder="https://libera.splunkcloudgc.com" />
+      </div>
+      <div class="sa-field">
+        <label>Index</label>
+        <input type="text" class="sa-input" [ngModel]="splunkIndex()" (ngModelChange)="splunkIndex.set($event)" placeholder="docker-test" />
+      </div>
+      <div class="sa-field">
+        <label>Username</label>
+        <input type="text" class="sa-input" [ngModel]="splunkUsername()" (ngModelChange)="splunkUsername.set($event)" placeholder="user&#64;domain.com" />
+      </div>
+      <div class="sa-field">
+        <label>Password</label>
+        <input type="password" class="sa-input" [ngModel]="splunkPassword()" (ngModelChange)="splunkPassword.set($event)" placeholder="password" />
+      </div>
+    </div>
+
+    <div class="sa-divider"></div>
+
+    <!-- Search Filters -->
+    <span class="sa-section-title">Search Filters</span>
+    <div class="sa-form-grid sa-form-grid--full">
+      <div class="sa-field">
+        <label>Request ID</label>
+        <input type="text" class="sa-input sa-input--mono" [ngModel]="requestId()" (ngModelChange)="requestId.set($event)" placeholder="e.g. 3fa85f64-5717-4562-b3fc-2c963f66afa6" />
+      </div>
+    </div>
+    <div class="sa-form-grid">
+      <div class="sa-field">
+        <label>Time Range</label>
+        <div class="sa-time-row">
+          <input type="text" class="sa-input" [ngModel]="earliest()" (ngModelChange)="earliest.set($event)" placeholder="-7d" />
+          <span class="sa-time-sep">to</span>
+          <input type="text" class="sa-input" [ngModel]="latest()" (ngModelChange)="latest.set($event)" placeholder="now" />
+        </div>
+      </div>
+      <div class="sa-field">
+        <label>Limit</label>
+        <input type="number" class="sa-input" [ngModel]="limit()" (ngModelChange)="limit.set($event)" min="1" max="1000" />
+      </div>
+    </div>
+    <div class="sa-form-grid sa-form-grid--full">
+      <div class="sa-field">
+        <label>Log Levels</label>
+        <div class="sa-level-chips">
+          @for (level of logLevels; track level) {
+            <button
+              type="button"
+              class="sa-seg-btn"
+              [class.active]="selectedLevels().includes(level)"
+              (click)="toggleLevel(level)"
+            >{{ level }}</button>
+          }
+        </div>
+      </div>
+    </div>
+    <div class="sa-form-grid">
+      <div class="sa-field">
+        <label>Class Name</label>
+        <input type="text" class="sa-input" [ngModel]="className()" (ngModelChange)="className.set($event)" placeholder="e.g. CaseQueryController" />
+      </div>
+      <div class="sa-field">
+        <label>Keyword</label>
+        <input type="text" class="sa-input" [ngModel]="keyword()" (ngModelChange)="keyword.set($event)" placeholder="partial match in log message" />
+      </div>
+    </div>
+
+    <div class="sa-divider"></div>
+
+    <!-- AI Configuration -->
+    <span class="sa-section-title">AI Configuration</span>
+    <div class="sa-form-grid">
+      <div class="sa-field">
+        <label>Anthropic API Key</label>
+        <input type="password" class="sa-input" [ngModel]="anthropicApiKey()" (ngModelChange)="anthropicApiKey.set($event)" placeholder="sk-ant-..." />
+      </div>
+      <div class="sa-field">
+        <label>Model</label>
+        <select class="sa-select" [ngModel]="model()" (ngModelChange)="model.set($event)">
+          @for (m of models; track m) {
+            <option [value]="m">{{ m }}</option>
+          }
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Actions ── -->
+  <div class="sa-actions">
+    <button class="sa-analyze-btn" (click)="analyze()" [disabled]="loading()">
+      @if (loading()) {
+        <span class="sa-spinner"></span> Analyzing...
+      } @else {
+        Analyze Logs
+      }
+    </button>
+  </div>
+
+  <!-- ── Error ── -->
+  @if (error()) {
+    <div class="sa-error">{{ error() }}</div>
+  }
+
+  <!-- ── Results ── -->
+  @if (result(); as r) {
+    <div class="sa-results">
+      <div class="sa-results-header">
+        <span class="sa-section-title">Analysis Result</span>
+        <button class="sa-copy-btn" (click)="copyFullAnalysis()">Copy JSON</button>
+      </div>
+
+      <div class="sa-card">
+        <h4>Summary</h4>
+        <p>{{ r.summary }}</p>
+      </div>
+
+      <div class="sa-card">
+        <h4>Root Cause</h4>
+        <p>{{ r.rootCause }}</p>
+      </div>
+
+      <div class="sa-card">
+        <h4>Error Location</h4>
+        <div class="sa-location-grid">
+          <div class="sa-location-item">
+            <span class="sa-location-label">File</span>
+            <span class="sa-location-value" (click)="copyToClipboard(r.errorLocation.file)">{{ r.errorLocation.file }}</span>
+          </div>
+          @if (r.errorLocation.line) {
+            <div class="sa-location-item">
+              <span class="sa-location-label">Line</span>
+              <span class="sa-location-value">{{ r.errorLocation.line }}</span>
+            </div>
+          }
+          @if (r.errorLocation.className) {
+            <div class="sa-location-item">
+              <span class="sa-location-label">Class</span>
+              <span class="sa-location-value">{{ r.errorLocation.className }}</span>
+            </div>
+          }
+          @if (r.errorLocation.method) {
+            <div class="sa-location-item">
+              <span class="sa-location-label">Method</span>
+              <span class="sa-location-value">{{ r.errorLocation.method }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      @if (r.suggestions.length > 0) {
+        <div class="sa-card">
+          <h4>Suggestions</h4>
+          @for (s of r.suggestions; track s.title) {
+            <div class="sa-suggestion">
+              <p class="sa-suggestion-title">{{ s.title }}</p>
+              <p class="sa-suggestion-desc">{{ s.description }}</p>
+              @if (s.codeSnippet) {
+                <div class="sa-code-block">
+                  <button class="sa-code-copy-btn" (click)="copyToClipboard(s.codeSnippet)">Copy</button>
+                  <pre><code>{{ s.codeSnippet }}</code></pre>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <div class="sa-card">
+        <div class="sa-raw-header">
+          <h4>Analyzed Log Entry</h4>
+          <button class="sa-toggle-btn" (click)="toggleRawLog()">
+            {{ showRawLog() ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+        @if (showRawLog()) {
+          <pre class="sa-raw-content">{{ r.analyzedLog | json }}</pre>
+        }
+      </div>
+    </div>
+  }
+
+  @if (searched() && !result() && !error()) {
+    <div class="sa-empty">No results — try adjusting your filters or time range.</div>
+  }
+</div>

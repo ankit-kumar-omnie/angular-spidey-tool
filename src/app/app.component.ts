@@ -16,19 +16,22 @@ import { CopyResultCardComponent } from './components/copy-result-card/copy-resu
 import { LoaderComponent } from './components/loader/loader.component';
 import { SnackbarComponent } from './components/snackbar/snackbar.component';
 import { EventStoreComponent } from './components/event-store/event-store.component';
+import { SplunkAnalyzeComponent } from './components/splunk-analyze/splunk-analyze.component';
 
-type ActiveTool = 'report911' | 'recordCopy' | 'eventStore';
+type ActiveTool = 'report911' | 'recordCopy' | 'eventStore' | 'splunkAnalyze';
 
 const TOOL_LABELS: Record<ActiveTool, string> = {
-  report911:  'Report 911 SPIDEY Tool',
-  recordCopy: 'Record SPIDEY Tool',
-  eventStore: 'Event Store Viewer',
+  report911:     'Report 911 SPIDEY Tool',
+  recordCopy:    'Record SPIDEY Tool',
+  eventStore:    'Event Store Viewer',
+  splunkAnalyze: 'Splunk Log Analyzer',
 };
 
 const TOOL_ICONS: Record<ActiveTool, string> = {
-  report911:  '📋',
-  recordCopy: '🗂️',
-  eventStore: '⚡',
+  report911:     '📋',
+  recordCopy:    '🗂️',
+  eventStore:    '⚡',
+  splunkAnalyze: '🔍',
 };
 
 @Component({
@@ -46,6 +49,7 @@ const TOOL_ICONS: Record<ActiveTool, string> = {
     LoaderComponent,
     SnackbarComponent,
     EventStoreComponent,
+    SplunkAnalyzeComponent,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],

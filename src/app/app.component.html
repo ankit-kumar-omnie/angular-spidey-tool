@@ -177,4 +177,11 @@
     </div>
   }
 
+  @if (activeTool() === "splunkAnalyze") {
+    <div class="card">
+      <p class="card-title">🔍 Splunk Log Analyzer</p>
+      <app-splunk-analyze />
+    </div>
+  }
+
 </div>
