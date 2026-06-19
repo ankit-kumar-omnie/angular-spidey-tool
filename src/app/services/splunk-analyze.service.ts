@@ -25,7 +25,6 @@ export interface SplunkLogAnalysisResponse {
 }
 
 export interface SplunkAnalyzeParams {
-  backendUrl: string;
   splunkHost: string;
   splunkUsername: string;
   splunkPassword: string;
@@ -46,6 +45,7 @@ export class SplunkAnalyzeService {
   constructor(private http: HttpClient, private auth: AuthService) {}
 
   private get headers() { return this.auth.getAuthHeaders(); }
+  private get base()    { return this.auth.baseUrl(); }
 
   analyze(params: SplunkAnalyzeParams): Observable<SplunkLogAnalysisResponse> {
     let httpParams = new HttpParams()
@@ -66,10 +66,8 @@ export class SplunkAnalyzeService {
       params.level.forEach(l => httpParams = httpParams.append('level', l));
     }
 
-    const baseUrl = params.backendUrl.replace(/\/+$/, '');
-
     return this.http.get<SplunkLogAnalysisResponse>(
-      `${baseUrl}/splunk/logs/analyze`,
+      `${this.base}/splunk/logs/analyze`,
       { headers: this.headers, params: httpParams },
     );
   }

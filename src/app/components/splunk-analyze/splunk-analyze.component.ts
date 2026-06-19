@@ -11,7 +11,6 @@ import { ThemeService } from '../../services/theme.service';
 
 const SPLUNK_CREDS_KEY = 'spidey_splunk_creds';
 const ANTHROPIC_KEY_STORAGE = 'spidey_anthropic_key';
-const BACKEND_URL_KEY = 'spidey_splunk_backend_url';
 
 const LOG_LEVELS = ['trace', 'debug', 'stat', 'info', 'warn', 'error', 'critical'] as const;
 
@@ -28,7 +27,6 @@ export class SplunkAnalyzeComponent {
   readonly theme   = inject(ThemeService);
 
   // ── Form fields
-  backendUrl     = signal(localStorage.getItem(BACKEND_URL_KEY) || 'http://localhost:3000/api');
   splunkHost     = signal(this.loadCreds().host || 'https://libera.splunkcloudgc.com');
   splunkUsername = signal(this.loadCreds().username || '');
   splunkPassword = signal(this.loadCreds().password || '');
@@ -85,10 +83,8 @@ export class SplunkAnalyzeComponent {
     // Save credentials for convenience
     this.saveCreds();
     localStorage.setItem(ANTHROPIC_KEY_STORAGE, this.anthropicApiKey());
-    localStorage.setItem(BACKEND_URL_KEY, this.backendUrl());
 
     const params: SplunkAnalyzeParams = {
-      backendUrl: this.backendUrl(),
       splunkHost: this.splunkHost(),
       splunkUsername: this.splunkUsername(),
       splunkPassword: this.splunkPassword(),
