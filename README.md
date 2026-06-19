@@ -12,7 +12,7 @@ npm start
 
 Runs on http://localhost:4200
 
-**Version:** 2.0  
+**Version:** 2.1  
 **Stack:** Angular 17 · TypeScript · Plain CSS (dark-mode aware)  
 **Last Updated:** April 2026
 
