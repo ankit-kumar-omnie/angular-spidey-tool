@@ -1,0 +1,118 @@
+<div class="gbm-root">
+  <div class="gbm-builder">
+
+    <!-- Repo -->
+    <span class="gbm-section-title">Repository</span>
+    <div class="gbm-form-grid gbm-form-grid--full">
+      <div class="gbm-field">
+        <label>Repo Path</label>
+        <input type="text" class="gbm-input gbm-input--mono" [ngModel]="repoPath()" (ngModelChange)="repoPath.set($event)" />
+      </div>
+    </div>
+
+    <div class="gbm-divider"></div>
+
+    <!-- New Branch Config -->
+    <span class="gbm-section-title">New Branch Config</span>
+    <div class="gbm-form-grid">
+      <div class="gbm-field">
+        <label>JIRA Ticket</label>
+        <input type="text" class="gbm-input" [ngModel]="jiraTicket()" (ngModelChange)="jiraTicket.set($event); refreshBranchNames()" placeholder="INFO-1234" />
+      </div>
+      <div class="gbm-field">
+        <label>Branch Suffix</label>
+        <input type="text" class="gbm-input" [ngModel]="branchSuffix()" (ngModelChange)="branchSuffix.set($event); refreshBranchNames()" placeholder="changes-base" />
+      </div>
+    </div>
+    <div class="gbm-form-grid gbm-form-grid--full">
+      <div class="gbm-field">
+        <label>Commit Message</label>
+        <input type="text" class="gbm-input" [ngModel]="commitMessage()" (ngModelChange)="commitMessage.set($event)" />
+      </div>
+    </div>
+
+    <div class="gbm-divider"></div>
+
+    <!-- Apply Mode -->
+    <span class="gbm-section-title">Apply Mode</span>
+    <div class="gbm-mode-group">
+      <button class="gbm-seg-btn" [class.active]="applyMode() === 'stash'" (click)="applyMode.set('stash')">Stash Apply</button>
+      <button class="gbm-seg-btn" [class.active]="applyMode() === 'cherry-pick'" (click)="applyMode.set('cherry-pick')">Cherry-Pick</button>
+    </div>
+
+    @if (applyMode() === 'cherry-pick') {
+      <div class="gbm-form-grid gbm-form-grid--full">
+        <div class="gbm-field">
+          <label>Commit Hash</label>
+          <input type="text" class="gbm-input gbm-input--mono" [ngModel]="commitHash()" (ngModelChange)="commitHash.set($event)" placeholder="abc1234..." />
+        </div>
+      </div>
+    }
+
+    <div class="gbm-divider"></div>
+
+    <!-- Source Branches -->
+    <span class="gbm-section-title">Source Branches</span>
+    <div class="gbm-form-grid gbm-form-grid--full">
+      <div class="gbm-field">
+        <label>Add source branches (one per line or comma separated)</label>
+        <div class="gbm-input-row">
+          <input type="text" class="gbm-input gbm-input--mono" [ngModel]="sourceBranchesInput()" (ngModelChange)="sourceBranchesInput.set($event)" (keyup.enter)="addBranches()" placeholder="release/vr-azrsa-20260601, release/vr-wydvr-20260601" />
+          <button class="gbm-btn gbm-btn--sm" (click)="addBranches()">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="gbm-presets">
+      <span class="gbm-preset-label">Quick add:</span>
+      @for (b of presetBranches; track b) {
+        <button class="gbm-chip" (click)="addPreset(b)">{{ getPresetLabel(b) }}</button>
+      }
+      <button class="gbm-chip gbm-chip--accent" (click)="addAllPresets()">All</button>
+    </div>
+
+    <!-- Branches Table -->
+    @if (branches().length > 0) {
+      <div class="gbm-branches">
+        <div class="gbm-branches-header">
+          <span class="gbm-branch-count">{{ branches().length }} branches</span>
+          <button class="gbm-link" (click)="selectAll()">Select All</button>
+          <button class="gbm-link" (click)="deselectAll()">Deselect All</button>
+        </div>
+        @for (b of branches(); track b.sourceBranch) {
+          <div class="gbm-branch-item" [class.gbm-branch-item--disabled]="!b.selected">
+            <input type="checkbox" [checked]="b.selected" (change)="toggleSelect(b.sourceBranch)" />
+            <div class="gbm-branch-info">
+              <code class="gbm-branch-source">{{ b.sourceBranch }}</code>
+              <code class="gbm-branch-new">→ {{ b.newBranch }}</code>
+            </div>
+            <button class="gbm-remove" (click)="removeBranch(b.sourceBranch)" title="Remove">×</button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Generated Script -->
+  @if (generatedScript()) {
+    <div class="gbm-output">
+      <div class="gbm-output-header">
+        <span class="gbm-section-title">Generated Script</span>
+        <div style="display: flex; gap: 8px;">
+          <button class="gbm-btn" (click)="runScript()">{{ isRunning() ? 'Running...' : 'Run Script' }}</button>
+          <button class="gbm-btn" (click)="copyScript()">Copy</button>
+        </div>
+      </div>
+      <pre class="gbm-script"><code>{{ generatedScript() }}</code></pre>
+    </div>
+  }
+
+  @if (scriptOutput()) {
+    <div class="gbm-output">
+      <div class="gbm-output-header">
+        <span class="gbm-section-title">{{ scriptSuccess() ? 'Output' : 'Error' }}</span>
+      </div>
+      <pre class="gbm-script" [style.border-color]="scriptSuccess() ? 'var(--status-success-border, #86efac)' : 'var(--status-error-border, #fca5a5)'"><code>{{ scriptOutput() }}</code></pre>
+    </div>
+  }
+</div>

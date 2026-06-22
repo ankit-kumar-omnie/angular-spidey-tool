@@ -1,0 +1,324 @@
+/* ============================================================
+   GIT BRANCH MANAGER
+   ============================================================ */
+
+.gbm-root {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.gbm-builder {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.gbm-section-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.gbm-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.gbm-form-grid--full {
+  grid-template-columns: 1fr;
+}
+
+.gbm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gbm-field label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.gbm-input {
+  padding: 9px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+
+.gbm-input:focus {
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+
+.gbm-input--mono {
+  font-family: 'Courier New', monospace;
+  font-size: 0.82rem;
+}
+
+.gbm-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.gbm-input-row .gbm-input {
+  flex: 1;
+}
+
+.gbm-divider {
+  height: 1px;
+  background: var(--border-color);
+}
+
+/* ── Presets ── */
+.gbm-presets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.gbm-preset-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.gbm-chip {
+  padding: 4px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.gbm-chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.gbm-chip--accent {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.gbm-chip--accent:hover {
+  filter: brightness(1.1);
+}
+
+/* ── Branches list ── */
+.gbm-branches {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.gbm-branches-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.gbm-branch-count {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.gbm-link {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.gbm-link:hover {
+  text-decoration: underline;
+}
+
+.gbm-branch-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-secondary);
+}
+
+.gbm-branch-item--disabled {
+  opacity: 0.5;
+}
+
+.gbm-branch-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.gbm-branch-source {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+.gbm-branch-new {
+  font-size: 0.8rem;
+  color: var(--accent);
+  word-break: break-all;
+}
+
+.gbm-branch-name {
+  flex: 1;
+  font-size: 0.8rem;
+  color: var(--accent);
+  word-break: break-all;
+}
+
+.gbm-remove {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.gbm-remove:hover {
+  color: var(--status-error-text, #ef4444);
+  background: var(--status-error-bg, rgba(239, 68, 68, 0.1));
+}
+
+/* ── Mode buttons ── */
+.gbm-mode-group {
+  display: flex;
+  gap: 4px;
+}
+
+.gbm-seg-btn {
+  padding: 7px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.gbm-seg-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.gbm-seg-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+/* ── Checkbox ── */
+.gbm-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  cursor: pointer;
+}
+
+/* ── Buttons ── */
+.gbm-btn {
+  padding: 8px 16px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.gbm-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.gbm-btn--sm {
+  padding: 6px 12px;
+  font-size: 0.78rem;
+}
+
+/* ── Output ── */
+.gbm-output {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gbm-output-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gbm-script {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 14px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  color: var(--text-primary);
+  overflow-x: auto;
+  max-height: 500px;
+  overflow-y: auto;
+  white-space: pre;
+  line-height: 1.6;
+}
+
+/* ── Spidey theme ── */
+[data-theme='spidey'] .gbm-input { background: #1a0505; border-color: #3d1a1a; color: #f5f0f0; }
+[data-theme='spidey'] .gbm-input:focus { border-color: #e63946; box-shadow: 0 0 0 3px rgba(230,57,70,0.25); }
+[data-theme='spidey'] .gbm-seg-btn { background: #1a0505; border-color: #3d1a1a; color: #b0a0a0; }
+[data-theme='spidey'] .gbm-seg-btn.active { background: linear-gradient(135deg, #e63946, #b91c2a); color: #fff; }
+[data-theme='spidey'] .gbm-chip { background: #1a0505; border-color: #3d1a1a; color: #b0a0a0; }
+[data-theme='spidey'] .gbm-chip:hover { border-color: #e63946; color: #ff8a8a; }
+[data-theme='spidey'] .gbm-branch-item { background: linear-gradient(145deg, #1a0505, #1f0d0d); border-color: #3d1a1a; }
+[data-theme='spidey'] .gbm-branch-name { color: #ff8a8a; }
+[data-theme='spidey'] .gbm-script { background: #0d0d0d; border-color: #3d1a1a; color: #d4b8b8; }
+[data-theme='spidey'] .gbm-btn { background: linear-gradient(135deg, #e63946, #b91c2a); }
+
+@media (max-width: 768px) {
+  .gbm-form-grid { grid-template-columns: 1fr; }
+  .gbm-mode-group { flex-wrap: wrap; }
+}

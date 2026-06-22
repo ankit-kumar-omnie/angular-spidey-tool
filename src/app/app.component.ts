@@ -17,21 +17,24 @@ import { LoaderComponent } from './components/loader/loader.component';
 import { SnackbarComponent } from './components/snackbar/snackbar.component';
 import { EventStoreComponent } from './components/event-store/event-store.component';
 import { SplunkAnalyzeComponent } from './components/splunk-analyze/splunk-analyze.component';
+import { GitBranchManagerComponent } from './components/git-branch-manager/git-branch-manager.component';
 
-type ActiveTool = 'report911' | 'recordCopy' | 'eventStore' | 'splunkAnalyze';
+type ActiveTool = 'report911' | 'recordCopy' | 'eventStore' | 'splunkAnalyze' | 'gitBranchManager';
 
 const TOOL_LABELS: Record<ActiveTool, string> = {
-  report911:     'Report 911 SPIDEY Tool',
-  recordCopy:    'Record SPIDEY Tool',
-  eventStore:    'Event Store Viewer',
-  splunkAnalyze: 'Splunk Log Analyzer',
+  report911:        'Report 911 SPIDEY Tool',
+  recordCopy:       'Record SPIDEY Tool',
+  eventStore:       'Event Store Viewer',
+  splunkAnalyze:    'Splunk Log Analyzer',
+  gitBranchManager: 'Git Branch Manager',
 };
 
 const TOOL_ICONS: Record<ActiveTool, string> = {
-  report911:     '📋',
-  recordCopy:    '🗂️',
-  eventStore:    '⚡',
-  splunkAnalyze: '🔍',
+  report911:        '📋',
+  recordCopy:       '🗂️',
+  eventStore:       '⚡',
+  splunkAnalyze:    '🔍',
+  gitBranchManager: '🌿',
 };
 
 @Component({
@@ -50,6 +53,7 @@ const TOOL_ICONS: Record<ActiveTool, string> = {
     SnackbarComponent,
     EventStoreComponent,
     SplunkAnalyzeComponent,
+    GitBranchManagerComponent,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],

@@ -184,4 +184,11 @@
     </div>
   }
 
+  @if (activeTool() === "gitBranchManager") {
+    <div class="card">
+      <p class="card-title">🌿 Git Branch Manager</p>
+      <app-git-branch-manager />
+    </div>
+  }
+
 </div>
