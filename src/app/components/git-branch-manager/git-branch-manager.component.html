@@ -49,6 +49,13 @@
       </div>
     }
 
+    <div class="gbm-field">
+      <label class="gbm-checkbox-label">
+        <input type="checkbox" [checked]="commitAndPush()" (change)="commitAndPush.set(!commitAndPush())" />
+        Commit and Push
+      </label>
+    </div>
+
     <div class="gbm-divider"></div>
 
     <!-- Source Branches -->

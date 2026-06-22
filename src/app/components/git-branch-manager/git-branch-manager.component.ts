@@ -32,6 +32,7 @@ export class GitBranchManagerComponent {
   sourceBranchesInput = signal("");
   applyMode = signal<"stash" | "cherry-pick">("stash");
   commitHash = signal("");
+  commitAndPush = signal(true);
 
   // ── Branches
   branches = signal<BranchEntry[]>([]);
@@ -245,13 +246,20 @@ export class GitBranchManagerComponent {
         lines.push("git stash apply");
       }
 
-      lines.push("git add .");
-      lines.push(`git commit -m "${commitMsg}"`);
-      lines.push(`git push origin ${newBranch}`);
+      if (this.commitAndPush()) {
+        lines.push("git add .");
+        lines.push(`git commit -m "${commitMsg}"`);
+        lines.push(`git push origin ${newBranch}`);
+      }
+
       lines.push("");
     }
 
-    lines.push('echo "Done! All branches created, committed, and pushed."');
+    lines.push(
+      this.commitAndPush()
+        ? 'echo "Done! All branches created, committed, and pushed."'
+        : 'echo "Done! All branches created with changes applied (not committed)."',
+    );
 
     return lines.join("\n");
   }
