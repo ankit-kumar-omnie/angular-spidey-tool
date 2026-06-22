@@ -239,6 +239,7 @@ export class GitBranchManagerComponent {
     for (const { sourceBranch, newBranch, tenant } of selected) {
       lines.push(`# ── ${tenant.toUpperCase()} ──`);
       lines.push(`if git checkout origin/${sourceBranch} 2>/dev/null && git checkout -b ${newBranch} 2>/dev/null; then`);
+      lines.push(`  git pull origin ${sourceBranch}`);
 
       if (this.applyMode() === "cherry-pick") {
         lines.push(`  if git cherry-pick ${this.commitHash().trim()} --no-commit 2>/dev/null; then`);
