@@ -57,6 +57,16 @@
       </label>
     </div>
 
+    <div class="gbm-field">
+      <label>On Conflict</label>
+      <div class="gbm-mode-group">
+        <button class="gbm-seg-btn" [class.active]="conflictStrategy() === 'theirs'" (click)="conflictStrategy.set('theirs')">Accept Theirs</button>
+        <button class="gbm-seg-btn" [class.active]="conflictStrategy() === 'ours'" (click)="conflictStrategy.set('ours')">Accept Ours</button>
+        <button class="gbm-seg-btn" [class.active]="conflictStrategy() === 'merge'" (click)="conflictStrategy.set('merge')">Keep Both</button>
+        <button class="gbm-seg-btn" [class.active]="conflictStrategy() === 'skip'" (click)="conflictStrategy.set('skip')">Skip</button>
+      </div>
+    </div>
+
     <div class="gbm-divider"></div>
 
     <!-- Source Branches -->

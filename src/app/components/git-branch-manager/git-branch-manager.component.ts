@@ -33,6 +33,7 @@ export class GitBranchManagerComponent {
   applyMode = signal<"stash" | "cherry-pick" | "none">("stash");
   commitHash = signal("");
   commitAndPush = signal(true);
+  conflictStrategy = signal<"skip" | "theirs" | "ours" | "merge">("theirs");
 
   // ── Branches
   branches = signal<BranchEntry[]>([]);
@@ -216,7 +217,7 @@ export class GitBranchManagerComponent {
       "#   2. Save: pbpaste > /tmp/apply-branches.sh && chmod +x /tmp/apply-branches.sh",
       "#   3. Run:  /tmp/apply-branches.sh",
       "",
-      "set -e",
+      "FAILED=\"\"",
       "",
       `cd ${repo}`,
       "git fetch origin",
@@ -237,29 +238,74 @@ export class GitBranchManagerComponent {
 
     for (const { sourceBranch, newBranch, tenant } of selected) {
       lines.push(`# ── ${tenant.toUpperCase()} ──`);
-      lines.push(`git checkout origin/${sourceBranch}`);
-      lines.push(`git checkout -b ${newBranch}`);
+      lines.push(`if git checkout origin/${sourceBranch} 2>/dev/null && git checkout -b ${newBranch} 2>/dev/null; then`);
 
       if (this.applyMode() === "cherry-pick") {
-        lines.push(`git cherry-pick ${this.commitHash().trim()} --no-commit`);
+        lines.push(`  if git cherry-pick ${this.commitHash().trim()} --no-commit 2>/dev/null; then`);
       } else if (this.applyMode() === "stash") {
-        lines.push("git stash apply");
+        lines.push("  if git stash apply 2>/dev/null; then");
+      } else {
+        lines.push("  if true; then");
       }
 
       if (this.commitAndPush() && this.applyMode() !== "none") {
-        lines.push("git add .");
-        lines.push(`git commit -m "${commitMsg}"`);
-        lines.push(`git push origin ${newBranch}`);
+        lines.push("    git add .");
+        lines.push(`    git commit -m "${commitMsg}"`);
+        lines.push(`    git push origin ${newBranch}`);
+        lines.push(`    echo "SUCCESS: ${tenant}"`);
+      } else {
+        lines.push(`    echo "SUCCESS: ${tenant} (branch created)"`);
       }
 
+      lines.push("  else");
+
+      if (this.conflictStrategy() === "theirs") {
+        lines.push(`    echo "CONFLICT: ${tenant} — resolving with --theirs"`);
+        lines.push("    git checkout --theirs .");
+        lines.push("    git add .");
+        if (this.commitAndPush()) {
+          lines.push(`    git commit -m "${commitMsg}"`);
+          lines.push(`    git push origin ${newBranch}`);
+        }
+        lines.push(`    echo "RESOLVED: ${tenant} (accepted theirs)"`);
+      } else if (this.conflictStrategy() === "ours") {
+        lines.push(`    echo "CONFLICT: ${tenant} — resolving with --ours"`);
+        lines.push("    git checkout --ours .");
+        lines.push("    git add .");
+        if (this.commitAndPush()) {
+          lines.push(`    git commit -m "${commitMsg}"`);
+          lines.push(`    git push origin ${newBranch}`);
+        }
+        lines.push(`    echo "RESOLVED: ${tenant} (accepted ours)"`);
+      } else if (this.conflictStrategy() === "merge") {
+        lines.push(`    echo "CONFLICT: ${tenant} — keeping both (manual merge markers removed)"`);
+        lines.push("    grep -rl '<<<<<<' . | xargs -I{} sed -i '' -e '/^<<<<<<</d' -e '/^=======/d' -e '/^>>>>>>>/d' {} 2>/dev/null || true");
+        lines.push("    git add .");
+        if (this.commitAndPush()) {
+          lines.push(`    git commit -m "${commitMsg} (merged both)"`);
+          lines.push(`    git push origin ${newBranch}`);
+        }
+        lines.push(`    echo "RESOLVED: ${tenant} (kept both sides)"`);
+      } else {
+        lines.push(`    echo "CONFLICT: ${tenant} — skipping, resolve manually"`);
+        lines.push(`    FAILED="\${FAILED} ${tenant}"`);
+        lines.push("    git checkout -- . 2>/dev/null");
+        lines.push(`    git checkout - 2>/dev/null`);
+      }
+
+      lines.push("  fi");
+      lines.push("else");
+      lines.push(`  echo "ERROR: ${tenant} — branch already exists or checkout failed"`);
+      lines.push(`  FAILED="\${FAILED} ${tenant}"`);
+      lines.push("fi");
       lines.push("");
     }
 
-    lines.push(
-      this.commitAndPush()
-        ? 'echo "Done! All branches created, committed, and pushed."'
-        : 'echo "Done! All branches created with changes applied (not committed)."',
-    );
+    lines.push('if [ -n "$FAILED" ]; then');
+    lines.push('  echo ""');
+    lines.push('  echo "FAILED/SKIPPED branches:$FAILED"');
+    lines.push('  echo "Resolve conflicts manually for these."');
+    lines.push("fi");
 
     return lines.join("\n");
   }
