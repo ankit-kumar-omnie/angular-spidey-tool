@@ -38,6 +38,7 @@
     <div class="gbm-mode-group">
       <button class="gbm-seg-btn" [class.active]="applyMode() === 'stash'" (click)="applyMode.set('stash')">Stash Apply</button>
       <button class="gbm-seg-btn" [class.active]="applyMode() === 'cherry-pick'" (click)="applyMode.set('cherry-pick')">Cherry-Pick</button>
+      <button class="gbm-seg-btn" [class.active]="applyMode() === 'none'" (click)="applyMode.set('none')">Create Only</button>
     </div>
 
     @if (applyMode() === 'cherry-pick') {

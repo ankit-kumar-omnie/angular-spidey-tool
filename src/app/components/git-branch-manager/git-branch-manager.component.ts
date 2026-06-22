@@ -30,7 +30,7 @@ export class GitBranchManagerComponent {
     "~/Documents/workspace/informed-backend/tmp/informed-program-config",
   );
   sourceBranchesInput = signal("");
-  applyMode = signal<"stash" | "cherry-pick">("stash");
+  applyMode = signal<"stash" | "cherry-pick" | "none">("stash");
   commitHash = signal("");
   commitAndPush = signal(true);
 
@@ -242,11 +242,11 @@ export class GitBranchManagerComponent {
 
       if (this.applyMode() === "cherry-pick") {
         lines.push(`git cherry-pick ${this.commitHash().trim()} --no-commit`);
-      } else {
+      } else if (this.applyMode() === "stash") {
         lines.push("git stash apply");
       }
 
-      if (this.commitAndPush()) {
+      if (this.commitAndPush() && this.applyMode() !== "none") {
         lines.push("git add .");
         lines.push(`git commit -m "${commitMsg}"`);
         lines.push(`git push origin ${newBranch}`);
