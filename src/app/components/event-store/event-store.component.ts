@@ -212,7 +212,7 @@ export class EventStoreComponent {
   }
 
   setCustomAggregate(val: string): void {
-    this.customAggregate.set(val.replace(/[^a-zA-Z0-9]/g, ''));
+    this.customAggregate.set(val.replace(/[^a-zA-Z0-9_]/g, ''));
   }
 
   setAggregateId(val: string): void {
