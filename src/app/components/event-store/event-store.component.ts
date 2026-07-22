@@ -15,7 +15,7 @@ const PAGE_SIZE = 10;
 /** JWT environment (auth) → event-store stream prefix */
 const JWT_ENV_TO_PREFIX: Record<string, EventEnvPrefix> = {
   Test: 'staging',
-  Staging: 'migration',
+  Staging: 'alpha',
   Production: 'alpha',
   Migration: 'migration',
 };
@@ -24,7 +24,7 @@ const CUSTOM_AGGREGATE = '__custom__' as const;
 
 const JWT_ENV_LABELS: Record<string, string> = {
   Test: 'Test',
-  Staging: 'Staging (Migration)',
+  Staging: 'Staging',
   Production: 'Production',
   Migration: 'Migration (WY Prod)',
 };
