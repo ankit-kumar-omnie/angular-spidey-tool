@@ -67,4 +67,12 @@ export class EventStoreService {
       { headers: this.headers, params }
     );
   }
+
+  updateEvent(streamId: string, eventNumber: number, updatedData: Partial<EventRecord>): Observable<EventRecord> {
+    return this.http.put<EventRecord>(
+      `${this.base}/aggregates/events/${encodeURIComponent(streamId)}/${eventNumber}`,
+      updatedData,
+      { headers: this.headers }
+    );
+  }
 }

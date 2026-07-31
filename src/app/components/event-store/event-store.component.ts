@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject } from '@angular/core';
+import { Component, signal, computed, inject, effect } from '@angular/core';
 import { CommonModule, DatePipe, JsonPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -46,6 +46,18 @@ export class EventStoreComponent {
   aggregatePreset = signal<AggregateType | typeof CUSTOM_AGGREGATE>('fundAccount');
   customAggregate = signal('');
   aggregateId     = signal('');
+  
+  // ── Editable Stream ID (initialized with auto-generated value)
+  editableStreamId = signal('');
+  userEditedStreamId = signal(false);
+
+  constructor() {
+    effect(() => {
+      if (!this.userEditedStreamId()) {
+        this.editableStreamId.set(this.streamId());
+      }
+    });
+  }
 
   /** Preset or temporary custom aggregate name for stream ID */
   effectiveAggregate = computed(() => {
@@ -90,6 +102,11 @@ export class EventStoreComponent {
   filterTimeTo   = signal('');
   searched   = signal(false);
   currentPage = signal(1);
+  
+  // ── Edit state
+  editingEventNumber = signal<number | null>(null);
+  editingPayload = signal('');
+  saving = signal(false);
 
   // ── Sort state
   sortField = signal<'number' | 'type' | 'date'>('number');
@@ -110,6 +127,22 @@ export class EventStoreComponent {
     return id
       ? this.svc.buildStreamId(env, tenant, agg, id)
       : `${env}:${tenant}:${agg}-<guid>`;
+  });
+
+  // ── Effective Stream ID (uses edited value if user has edited it, otherwise auto-generated)
+  effectiveStreamId = computed(() => {
+    if (this.userEditedStreamId() && this.editableStreamId().trim()) {
+      return this.editableStreamId().trim();
+    }
+    return this.streamId();
+  });
+
+  // ── Check if we have a valid Stream ID to fetch
+  hasValidStreamId = computed(() => {
+    if (this.userEditedStreamId()) {
+      return this.editableStreamId().trim().length > 0;
+    }
+    return this.aggregateId().trim().length > 0 && this.hasTokenContext() && !!this.effectiveAggregate();
   });
 
   // ── Unique event types for dropdown filter
@@ -219,6 +252,18 @@ export class EventStoreComponent {
     this.aggregateId.set(val.replace(/["']/g, '').trim());
   }
 
+  setEditableStreamId(val: string): void {
+    this.editableStreamId.set(val.trim());
+    if (val.trim()) {
+      this.userEditedStreamId.set(true);
+    }
+  }
+
+  resetStreamId(): void {
+    this.editableStreamId.set('');
+    this.userEditedStreamId.set(false);
+  }
+
   fetchEvents(): void {
     this.error.set(null);
     this.events.set([]);
@@ -235,7 +280,7 @@ export class EventStoreComponent {
     this.loading.set(true);
     this.searched.set(false);
 
-    this.svc.getEvents(this.streamId()).subscribe({
+    this.svc.getEvents(this.effectiveStreamId()).subscribe({
       next: data => {
         this.events.set(Array.isArray(data) ? data : []);
         this.loading.set(false);
@@ -318,7 +363,7 @@ export class EventStoreComponent {
   }
 
   copyStreamId(): void {
-    navigator.clipboard.writeText(this.streamId()).then(() => this.snackbar.success('Stream ID copied.'));
+    navigator.clipboard.writeText(this.effectiveStreamId()).then(() => this.snackbar.success('Stream ID copied.'));
   }
 
   copyPayload(ev: EventRecord): void {
@@ -333,11 +378,64 @@ export class EventStoreComponent {
     const blob   = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url    = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
-    const name   = `events-${this.effectiveAggregate()}-${this.aggregateId().slice(0, 8) || 'stream'}-${Date.now()}.json`;
+    const streamIdPart = this.userEditedStreamId() ? 'custom' : (this.aggregateId().slice(0, 8) || 'stream');
+    const name   = `events-${this.effectiveAggregate()}-${streamIdPart}-${Date.now()}.json`;
     anchor.href     = url;
     anchor.download = name;
     anchor.click();
     URL.revokeObjectURL(url);
     this.snackbar.success(`Exported ${data.length} events as ${name}`);
+  }
+
+  // ── Edit methods
+  startEdit(eventNumber: number): void {
+    const event = this.events().find(e => e.number === eventNumber);
+    if (event) {
+      this.editingEventNumber.set(eventNumber);
+      this.editingPayload.set(JSON.stringify(event.data.payload, null, 2));
+    }
+  }
+
+  cancelEdit(): void {
+    this.editingEventNumber.set(null);
+    this.editingPayload.set('');
+  }
+
+  saveEdit(): void {
+    const eventNumber = this.editingEventNumber();
+    if (!eventNumber) return;
+
+    try {
+      const updatedPayload = JSON.parse(this.editingPayload());
+      this.saving.set(true);
+
+      const event = this.events().find(e => e.number === eventNumber);
+      if (!event) return;
+
+      this.svc.updateEvent(this.streamId(), eventNumber, {
+        ...event,
+        data: {
+          ...event.data,
+          payload: updatedPayload
+        }
+      }).subscribe({
+        next: (updatedEvent) => {
+          const updatedEvents = this.events().map(e => 
+            e.number === eventNumber ? updatedEvent : e
+          );
+          this.events.set(updatedEvents);
+          this.editingEventNumber.set(null);
+          this.editingPayload.set('');
+          this.saving.set(false);
+          this.snackbar.success('Event updated successfully.');
+        },
+        error: (e) => {
+          this.saving.set(false);
+          this.snackbar.error('Failed to update event: ' + (e?.message ?? 'Unknown error'));
+        }
+      });
+    } catch (err) {
+      this.snackbar.error('Invalid JSON format. Please check your syntax.');
+    }
   }
 }

@@ -133,18 +133,31 @@
     <!-- Stream ID preview -->
     <div class="es-stream-preview">
       <span class="es-stream-label">Stream ID</span>
-      <code class="es-stream-id" (click)="copyStreamId()" title="Click to copy">{{ streamId() }}</code>
-      <button class="es-copy-btn" (click)="copyStreamId()" title="Copy">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-        </svg>
-      </button>
+      <div class="es-stream-content">
+        <input class="es-input es-input--mono es-stream-input"
+          placeholder="Auto-generated from form fields..."
+          [ngModel]="effectiveStreamId()"
+          (ngModelChange)="setEditableStreamId($event)" />
+        @if (userEditedStreamId()) {
+          <button class="es-reset-btn" (click)="resetStreamId()" title="Reset to auto-generated">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+              <path d="M3 3v5h5"/>
+            </svg>
+          </button>
+        }
+        <button class="es-copy-btn" (click)="copyStreamId()" title="Copy">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+        </button>
+      </div>
     </div>
 
     <div class="es-actions">
       <button class="es-fetch-btn"
-        [disabled]="loading() || !aggregateId().trim() || !hasTokenContext() || !effectiveAggregate()"
+        [disabled]="loading() || !hasValidStreamId()"
         (click)="fetchEvents()">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -339,15 +352,49 @@
               <div class="es-payload-wrap">
                 <div class="es-payload-header">
                   <span class="es-payload-label">Payload</span>
-                  <button class="es-copy-payload-btn" (click)="copyPayload(ev)">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                    </svg>
-                    Copy JSON
-                  </button>
+                  <div class="es-payload-actions">
+                    @if (editingEventNumber() !== ev.number) {
+                      <button class="es-edit-payload-btn" (click)="startEdit(ev.number)" title="Edit payload">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                        Edit
+                      </button>
+                    }
+                    <button class="es-copy-payload-btn" (click)="copyPayload(ev)">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                      </svg>
+                      Copy JSON
+                    </button>
+                  </div>
                 </div>
-                <pre class="es-payload">{{ ev.data.payload | json }}</pre>
+                @if (editingEventNumber() === ev.number) {
+                  <div class="es-payload-edit">
+                    <textarea 
+                      class="es-payload-textarea"
+                      [ngModel]="editingPayload()"
+                      (ngModelChange)="editingPayload.set($event)"
+                      placeholder="Edit JSON payload..."
+                      rows="12"></textarea>
+                    <div class="es-edit-actions">
+                      <button class="es-edit-btn es-edit-btn--cancel" (click)="cancelEdit()" [disabled]="saving()">
+                        Cancel
+                      </button>
+                      <button class="es-edit-btn es-edit-btn--save" (click)="saveEdit()" [disabled]="saving()">
+                        @if (saving()) {
+                          <span class="es-saving-spinner">Saving...</span>
+                        } @else {
+                          Save Changes
+                        }
+                      </button>
+                    </div>
+                  </div>
+                } @else {
+                  <pre class="es-payload">{{ ev.data.payload | json }}</pre>
+                }
               </div>
             </div>
           }
