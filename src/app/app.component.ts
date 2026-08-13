@@ -18,8 +18,9 @@ import { SnackbarComponent } from './components/snackbar/snackbar.component';
 import { EventStoreComponent } from './components/event-store/event-store.component';
 import { SplunkAnalyzeComponent } from './components/splunk-analyze/splunk-analyze.component';
 import { GitBranchManagerComponent } from './components/git-branch-manager/git-branch-manager.component';
+import { StreamExportComponent } from './components/stream-export/stream-export.component';
 
-type ActiveTool = 'report911' | 'recordCopy' | 'eventStore' | 'splunkAnalyze' | 'gitBranchManager';
+type ActiveTool = 'report911' | 'recordCopy' | 'eventStore' | 'splunkAnalyze' | 'gitBranchManager' | 'streamExport';
 
 const TOOL_LABELS: Record<ActiveTool, string> = {
   report911:        'Report 911 SPIDEY Tool',
@@ -27,6 +28,7 @@ const TOOL_LABELS: Record<ActiveTool, string> = {
   eventStore:       'Event Store Viewer',
   splunkAnalyze:    'Splunk Log Analyzer',
   gitBranchManager: 'Git Branch Manager',
+  streamExport:     'Stream Export',
 };
 
 const TOOL_ICONS: Record<ActiveTool, string> = {
@@ -35,6 +37,7 @@ const TOOL_ICONS: Record<ActiveTool, string> = {
   eventStore:       '⚡',
   splunkAnalyze:    '🔍',
   gitBranchManager: '🌿',
+  streamExport:     '📤',
 };
 
 @Component({
@@ -54,6 +57,7 @@ const TOOL_ICONS: Record<ActiveTool, string> = {
     EventStoreComponent,
     SplunkAnalyzeComponent,
     GitBranchManagerComponent,
+    StreamExportComponent,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
