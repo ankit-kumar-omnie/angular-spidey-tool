@@ -8,6 +8,7 @@ const ENV_URL_MAP: Record<string, string> = {
   Staging: 'https://staging-api.informed.cloud/api',
   Production: 'https://api.informed.cloud/api',
   Migration: 'https://migration-api.informed.cloud/api',
+  Libera: 'http://localhost:3000/api',
 };
 
 @Injectable({ providedIn: 'root' })
@@ -71,11 +72,16 @@ export class AuthService {
     }
   }
 
-  decodeEnv(token: string): 'Test' | 'Staging' | 'Production' | 'Migration' | '' {
+  decodeEnv(token: string): 'Test' | 'Staging' | 'Production' | 'Migration' | 'Libera' | '' {
     try {
-      const aud: string[] = JSON.parse(atob(token.split('.')[1])).aud ?? [];
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const tenant: string = payload['active-tenant'] ?? '';
+      if (tenant.trim().toLowerCase() === 'libera') return 'Libera';
+
+      const aud: string[] = payload.aud ?? [];
       const a = Array.isArray(aud) ? aud : [aud];
       const has = (fn: (x: string) => boolean) => a.some(fn);
+      if (has(x => x.includes('localhost') || x.includes('libera'))) return 'Libera';
       if (has(x => x.includes('migration') || x.includes('wy-prod') || x.includes('wyprod'))) {
         return 'Migration';
       }

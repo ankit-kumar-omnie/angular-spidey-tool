@@ -20,6 +20,7 @@ const JWT_ENV_TO_PREFIX: Record<string, EventEnvPrefix> = {
   Staging: 'alpha',
   Production: 'alpha',
   Migration: 'migration',
+  Libera: 'local',
 };
 
 const CUSTOM_AGGREGATE = '__custom__' as const;
@@ -29,6 +30,7 @@ const JWT_ENV_LABELS: Record<string, string> = {
   Staging: 'Staging',
   Production: 'Production',
   Migration: 'Migration (WY Prod)',
+  Libera: 'Libera (Local)',
 };
 
 @Component({

@@ -26,13 +26,14 @@ export interface EventRecord {
   };
 }
 
-export type EventEnvPrefix = 'staging' | 'alpha' | 'migration';
+export type EventEnvPrefix = 'staging' | 'alpha' | 'migration' | 'local';
 export type AggregateType = 'fundAccount' | 'record' | 'case' | 'caseService' | 'authorization' | 'Report911' | 'dataCollection' | 'payment';
 
 export const ENV_PREFIXES: { value: EventEnvPrefix; label: string }[] = [
   { value: 'staging',   label: 'Test' },
   { value: 'alpha',     label: 'Staging / Production' },
   { value: 'migration', label: 'Migration (WY Prod)' },
+  { value: 'local',     label: 'Libera (Local)' },
 ];
 
 export const AGGREGATE_TYPES: { value: AggregateType; label: string }[] = [
