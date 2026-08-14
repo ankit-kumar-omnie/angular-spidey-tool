@@ -168,6 +168,8 @@
           <select [ngModel]="form().isActive" (ngModelChange)="setField('isActive',$event)">
             <option value="true">Activate (Report to 911)</option>
             <option value="false">Deactivate (Un-report from 911)</option>
+            <option value="forceFulActivate">Force Activate (bypass rules)</option>
+            <option value="forceFulDeactivate">Force Deactivate (bypass rules)</option>
           </select>
         </div>
       }

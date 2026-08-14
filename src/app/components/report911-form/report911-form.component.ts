@@ -131,15 +131,25 @@ export class Report911FormComponent implements OnInit {
     this.lookup.update(l => ({ ...l, [field]: value }));
   }
 
+  private static readonly ACTIVATION_LABELS: Record<string, string> = {
+    true: 'Activate Cases',
+    false: 'Deactivate Cases',
+    forceFulActivate: 'Force Activate Cases',
+    forceFulDeactivate: 'Force Deactivate Cases',
+  };
+
+  private static readonly DEACTIVATE_VALUES = new Set(['false', 'forceFulDeactivate']);
+
   get submitLabel(): string {
     if (this.loading()) return 'Submitting...';
     if (this.mode() === 'copy') return 'Copy to Report 911';
     if (this.mode() === 'unReport') return 'Un-Report';
-    return this.form().isActive === 'true' ? 'Activate Cases' : 'Deactivate Cases';
+    return Report911FormComponent.ACTIVATION_LABELS[this.form().isActive] ?? 'Submit';
   }
 
   get isUnreportStyle(): boolean {
-    return this.mode() === 'unReport' || (this.mode() === 'activation' && this.form().isActive === 'false');
+    return this.mode() === 'unReport' ||
+      (this.mode() === 'activation' && Report911FormComponent.DEACTIVATE_VALUES.has(this.form().isActive));
   }
 
   handleSubmit(): void {
