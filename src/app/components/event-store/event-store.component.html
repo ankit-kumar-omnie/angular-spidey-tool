@@ -180,6 +180,19 @@
             <span class="es-export-filtered">(filtered)</span>
           }
         </button>
+
+        <!-- Export to Excel -->
+        <button class="es-export-btn" (click)="exportExcel()" title="Export filtered events as Excel (Rollback From/To)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Export to Excel
+          @if (hasActiveFilters()) {
+            <span class="es-export-filtered">(filtered)</span>
+          }
+        </button>
       }
     </div>
 
@@ -258,6 +271,14 @@
     </div>
   }
 
+  <!-- ── View toggle ── -->
+  @if (events().length) {
+    <div class="es-seg-group es-seg-group--wrap">
+      <button type="button" class="es-seg-btn" [class.active]="viewMode() === 'timeline'" (click)="setViewMode('timeline')">Timeline</button>
+      <button type="button" class="es-seg-btn" [class.active]="viewMode() === 'table'" (click)="setViewMode('table')">Table (Rollback Info)</button>
+    </div>
+  }
+
   <!-- ── Event timeline ── -->
   @if (pagedEvents().length) {
 
@@ -300,6 +321,34 @@
       </button>
     </div>
 
+    @if (viewMode() === 'table') {
+      <div class="es-table-wrap">
+        <table class="es-flat-table">
+          <thead>
+            <tr>
+              <th>Aggregate ID</th>
+              <th>Rollback From</th>
+              <th>Status Date</th>
+              <th>Rollback To</th>
+              <th>Created At</th>
+              <th>User</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of tableRows(); track row.id) {
+              <tr>
+                <td class="es-mono">{{ row.aggregateId }}</td>
+                <td>{{ row.currentStatus }}</td>
+                <td>{{ row.statusDate }}</td>
+                <td>{{ row.targetStatus }}</td>
+                <td>{{ row.createdAt }}</td>
+                <td>{{ row.userName }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
     <div class="es-timeline">
       @for (ev of pagedEvents(); track ev.id) {
         <div class="es-event" [class.es-event--expanded]="expanded().has(ev.id)">
@@ -401,6 +450,7 @@
         </div>
       }
     </div>
+    }
 
     <!-- ── Pagination ── -->
     @if (totalPages() > 1) {

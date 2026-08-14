@@ -9,8 +9,10 @@ import {
 import { SnackbarService } from '../../services/snackbar.service';
 import { ThemeService } from '../../services/theme.service';
 import { AuthService } from '../../services/auth.service';
+import { StreamExportService } from '../../services/stream-export.service';
 
 const PAGE_SIZE = 10;
+const TABLE_PAGE_SIZE = 20;
 
 /** JWT environment (auth) → event-store stream prefix */
 const JWT_ENV_TO_PREFIX: Record<string, EventEnvPrefix> = {
@@ -37,10 +39,11 @@ const JWT_ENV_LABELS: Record<string, string> = {
   styleUrls: ['./event-store.component.css'],
 })
 export class EventStoreComponent {
-  private svc      = inject(EventStoreService);
-  private snackbar = inject(SnackbarService);
-  readonly theme   = inject(ThemeService);
-  private auth     = inject(AuthService);
+  private svc       = inject(EventStoreService);
+  private snackbar  = inject(SnackbarService);
+  readonly theme    = inject(ThemeService);
+  private auth      = inject(AuthService);
+  private exportSvc = inject(StreamExportService);
 
   // ── Editable form state (env + tenant come from JWT only)
   aggregatePreset = signal<AggregateType | typeof CUSTOM_AGGREGATE>('fundAccount');
@@ -94,6 +97,7 @@ export class EventStoreComponent {
   error      = signal<string | null>(null);
   events     = signal<EventRecord[]>([]);
   expanded   = signal<Set<string>>(new Set());
+  viewMode   = signal<'timeline' | 'table'>('timeline');
   filterText     = signal('');
   filterType     = signal('');
   filterDateFrom = signal('');
@@ -209,13 +213,21 @@ export class EventStoreComponent {
   });
 
   // ── Pagination
-  totalPages = computed(() => Math.max(1, Math.ceil(this.filteredEvents().length / PAGE_SIZE)));
+  pageSize = computed(() => this.viewMode() === 'table' ? TABLE_PAGE_SIZE : PAGE_SIZE);
+
+  totalPages = computed(() => Math.max(1, Math.ceil(this.filteredEvents().length / this.pageSize())));
 
   pagedEvents = computed(() => {
+    const size = this.pageSize();
     const page = Math.min(this.currentPage(), this.totalPages());
-    const start = (page - 1) * PAGE_SIZE;
-    return this.filteredEvents().slice(start, start + PAGE_SIZE);
+    const start = (page - 1) * size;
+    return this.filteredEvents().slice(start, start + size);
   });
+
+  /** Flattened Aggregate ID / Rollback From / Rollback To view — same fields as the Excel export, for the current page only. */
+  tableRows = computed(() =>
+    this.pagedEvents().map(ev => ({ id: ev.id, ...this.exportSvc.parseEvent(ev) }))
+  );
 
   pageNumbers = computed(() => {
     const total = this.totalPages();
@@ -310,6 +322,11 @@ export class EventStoreComponent {
 
   onFilterChange(): void { this.currentPage.set(1); }
 
+  setViewMode(mode: 'timeline' | 'table'): void {
+    this.viewMode.set(mode);
+    this.currentPage.set(1);
+  }
+
   setSort(field: 'number' | 'type' | 'date'): void {
     if (this.sortField() === field) {
       // cycle: asc → desc → asc
@@ -385,6 +402,18 @@ export class EventStoreComponent {
     anchor.click();
     URL.revokeObjectURL(url);
     this.snackbar.success(`Exported ${data.length} events as ${name}`);
+  }
+
+  // ── Export — all filtered events as Excel (.xlsx), flattened to Rollback From/To columns
+  exportExcel(): void {
+    const events = this.filteredEvents();
+    if (!events.length) {
+      this.snackbar.error('Nothing to export — fetch events first.');
+      return;
+    }
+    const rows = events.map(ev => this.exportSvc.parseEvent(ev));
+    this.exportSvc.exportToExcel(rows, this.effectiveStreamId());
+    this.snackbar.success(`Exported ${rows.length} row${rows.length !== 1 ? 's' : ''} to Excel.`);
   }
 
   // ── Edit methods
