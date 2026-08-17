@@ -41,14 +41,14 @@
       <button class="gbm-seg-btn" [class.active]="applyMode() === 'none'" (click)="applyMode.set('none')">Create Only</button>
     </div>
 
-    @if (applyMode() === 'cherry-pick') {
+    <ng-container *ngIf="applyMode() === 'cherry-pick'">
       <div class="gbm-form-grid gbm-form-grid--full">
         <div class="gbm-field">
           <label>Commit Hash</label>
           <input type="text" class="gbm-input gbm-input--mono" [ngModel]="commitHash()" (ngModelChange)="commitHash.set($event)" placeholder="abc1234..." />
         </div>
       </div>
-    }
+    </ng-container>
 
     <div class="gbm-field">
       <label class="gbm-checkbox-label">
@@ -83,21 +83,21 @@
 
     <div class="gbm-presets">
       <span class="gbm-preset-label">Quick add:</span>
-      @for (b of presetBranches; track b) {
+      <ng-container *ngFor="let b of presetBranches; trackBy: trackByBranch">
         <button class="gbm-chip" (click)="addPreset(b)">{{ getPresetLabel(b) }}</button>
-      }
+      </ng-container>
       <button class="gbm-chip gbm-chip--accent" (click)="addAllPresets()">All</button>
     </div>
 
     <!-- Branches Table -->
-    @if (branches().length > 0) {
+    <ng-container *ngIf="branches().length > 0">
       <div class="gbm-branches">
         <div class="gbm-branches-header">
           <span class="gbm-branch-count">{{ branches().length }} branches</span>
           <button class="gbm-link" (click)="selectAll()">Select All</button>
           <button class="gbm-link" (click)="deselectAll()">Deselect All</button>
         </div>
-        @for (b of branches(); track b.sourceBranch) {
+        <ng-container *ngFor="let b of branches(); trackBy: trackBySourceBranch">
           <div class="gbm-branch-item" [class.gbm-branch-item--disabled]="!b.selected">
             <input type="checkbox" [checked]="b.selected" (change)="toggleSelect(b.sourceBranch)" />
             <div class="gbm-branch-info">
@@ -106,13 +106,13 @@
             </div>
             <button class="gbm-remove" (click)="removeBranch(b.sourceBranch)" title="Remove">×</button>
           </div>
-        }
+        </ng-container>
       </div>
-    }
+    </ng-container>
   </div>
 
   <!-- Generated Script -->
-  @if (generatedScript()) {
+  <ng-container *ngIf="generatedScript()">
     <div class="gbm-output">
       <div class="gbm-output-header">
         <span class="gbm-section-title">Generated Script</span>
@@ -123,14 +123,14 @@
       </div>
       <pre class="gbm-script"><code>{{ generatedScript() }}</code></pre>
     </div>
-  }
+  </ng-container>
 
-  @if (scriptOutput()) {
+  <ng-container *ngIf="scriptOutput()">
     <div class="gbm-output">
       <div class="gbm-output-header">
         <span class="gbm-section-title">{{ scriptSuccess() ? 'Output' : 'Error' }}</span>
       </div>
       <pre class="gbm-script" [style.border-color]="scriptSuccess() ? 'var(--status-success-border, #86efac)' : 'var(--status-error-border, #fca5a5)'"><code>{{ scriptOutput() }}</code></pre>
     </div>
-  }
+  </ng-container>
 </div>

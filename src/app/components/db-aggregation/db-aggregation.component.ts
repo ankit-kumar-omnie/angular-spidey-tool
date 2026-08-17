@@ -185,6 +185,14 @@ export class DbAggregationComponent {
     });
   }
 
+  trackByColumn(index: number, col: string): string {
+    return col;
+  }
+
+  trackById(index: number, row: { id: string }): string {
+    return row.id;
+  }
+
   toggleColumn(col: string): void {
     this.selectedColumns.update(set => {
       const next = new Set(set);

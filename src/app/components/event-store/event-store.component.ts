@@ -67,7 +67,7 @@ export class EventStoreComponent {
       if (!this.userEditedStreamId()) {
         this.editableStreamId.set(this.streamId());
       }
-    });
+    }, { allowSignalWrites: true });
   }
 
   /** Preset or temporary custom aggregate name for stream ID */
@@ -452,6 +452,22 @@ export class EventStoreComponent {
     const time = timeStr || '23:59:59';
     const d = new Date(`${dateStr}T${time}`);
     return Number.isNaN(d.getTime()) ? null : d;
+  }
+
+  trackByAggregateType(index: number, a: { value: AggregateType; label: string }): AggregateType {
+    return a.value;
+  }
+
+  trackByValue(index: number, val: string): string {
+    return val;
+  }
+
+  trackById(index: number, item: { id: string }): string {
+    return item.id;
+  }
+
+  trackByIndex(index: number): number {
+    return index;
   }
 
   toggleExpand(id: string): void {

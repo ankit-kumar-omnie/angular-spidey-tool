@@ -8,10 +8,9 @@ import { ThemeService } from '../../services/theme.service';
   standalone: true,
   imports: [CommonModule],
   template: `
-    @if (loader.loading()) {
-      <div class="loader-overlay" role="status" aria-label="Loading">
+    <div class="loader-overlay" role="status" aria-label="Loading" *ngIf="loader.loading()">
 
-        @if (theme.theme() === 'spidey') {
+        <ng-container *ngIf="theme.theme() === 'spidey'; else defaultSpinnerBlock">
           <!-- ── SPIDEY 3D WEB LOADER ── -->
           <div class="spidey-loader">
 
@@ -80,7 +79,8 @@ import { ThemeService } from '../../services/theme.service';
             </p>
           </div>
 
-        } @else {
+        </ng-container>
+        <ng-template #defaultSpinnerBlock>
           <!-- ── DEFAULT SPINNER ── -->
           <div class="loader-box">
             <div class="spinner">
@@ -90,10 +90,9 @@ import { ThemeService } from '../../services/theme.service';
             </div>
             <p class="loader-text">Loading…</p>
           </div>
-        }
+        </ng-template>
 
-      </div>
-    }
+    </div>
   `,
   styleUrls: ['./loader.component.css'],
 })

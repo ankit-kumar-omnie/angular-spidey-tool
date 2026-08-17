@@ -43,4 +43,20 @@ export class RecordCopyResultsComponent {
       }
     });
   }
+
+  trackByProgram(index: number, p: Program): Program {
+    return p;
+  }
+
+  trackByTask(index: number, t: CopyTask): CopyTask {
+    return t;
+  }
+
+  trackByStatus(index: number, s: CopyStatus): CopyStatus {
+    return s;
+  }
+
+  trackById(index: number, r: CopyResultRecord): string {
+    return r.id;
+  }
 }

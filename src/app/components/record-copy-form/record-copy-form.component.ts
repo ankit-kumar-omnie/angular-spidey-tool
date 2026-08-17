@@ -1,7 +1,7 @@
 import { Component, Output, EventEmitter, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RecordCopyService, CopyCommandResult, ConfigEntry, Program, CopyTask } from '../../services/record-copy.service';
+import { RecordCopyService, CopyCommandResult, ConfigEntry, ConfigSection, ConfigElement, Program, CopyTask } from '../../services/record-copy.service';
 import { RecordCopyResultsComponent } from '../record-copy-results/record-copy-results.component';
 import { RECORD_CONFIG_LOOKUP } from '../../data/record-config-lookup';
 
@@ -156,5 +156,33 @@ export class RecordCopyFormComponent implements OnInit {
       }));
     }
     return [];
+  }
+
+  trackByProgram(index: number, item: Program): Program {
+    return item;
+  }
+
+  trackByTask(index: number, item: CopyTask): CopyTask {
+    return item;
+  }
+
+  trackByConfigId(index: number, item: ConfigEntry): string {
+    return item.config.configId;
+  }
+
+  trackBySectionId(index: number, item: ConfigSection): string {
+    return item.section.sectionId;
+  }
+
+  trackByElementId(index: number, item: ConfigElement): string {
+    return item.elementId;
+  }
+
+  trackByIndex(index: number): number {
+    return index;
+  }
+
+  trackByEntryKey(index: number, item: { key: string; val: string }): string {
+    return item.key;
   }
 }

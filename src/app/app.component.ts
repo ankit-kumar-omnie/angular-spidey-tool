@@ -106,6 +106,14 @@ export class AppComponent {
   toggleToolMenu() { this.toolMenuOpen.update(o => !o); }
   toggleTheme() { this.theme.toggleTheme(); }
 
+  trackByKey(index: number, key: ActiveTool): ActiveTool {
+    return key;
+  }
+
+  trackById(index: number, item: { id: string }): string {
+    return item.id;
+  }
+
   themeLabel() {
     const next = { light: 'Switch to Dark', dark: 'Switch to Spidey 🕷', spidey: 'Switch to Light' };
     return next[this.theme.theme()];

@@ -49,4 +49,12 @@ export class Report911ResultsComponent {
       }
     });
   }
+
+  trackByStatus(index: number, s: MigrationStatus): MigrationStatus {
+    return s;
+  }
+
+  trackById(index: number, r: ResultRecord): string {
+    return r.id;
+  }
 }

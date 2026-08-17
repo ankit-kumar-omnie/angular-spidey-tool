@@ -7,7 +7,7 @@
     <div class="filter-group"><label>Status</label>
       <select [ngModel]="filters().status ?? ''" (ngModelChange)="setFilter('status',$event)" name="status">
         <option value="">All</option>
-        @for (s of statuses; track s) { <option [value]="s">{{ s }}</option> }
+        <ng-container *ngFor="let s of statuses; trackBy: trackByStatus"> <option [value]="s">{{ s }}</option> </ng-container>
       </select></div>
     <div class="filter-group"><label>Type</label>
       <select [ngModel]="unReportValue()" (ngModelChange)="setUnReport($event)" name="unReport">
@@ -24,13 +24,17 @@
     <button type="submit" class="search-btn" [disabled]="loading()">{{ loading() ? 'Searching...' : 'Search' }}</button>
   </form>
 
-  @if (error()) { <p class="results-error">{{ error() }}</p> }
-  @if (results() !== null && results()!.length === 0) { <p class="results-empty">No results found.</p> }
-  @if (results() !== null && results()!.length > 0) {
+  <ng-container *ngIf="error()">
+    <p class="results-error">{{ error() }}</p>
+  </ng-container>
+  <ng-container *ngIf="results() !== null && results()!.length === 0">
+    <p class="results-empty">No results found.</p>
+  </ng-container>
+  <ng-container *ngIf="results() !== null && results()!.length > 0">
     <div class="result-cards">
-      @for (r of results()!; track r.id) {
+      <ng-container *ngFor="let r of results()!; trackBy: trackById">
         <app-result-card [record]="r" (refresh)="handleRefresh($event)" />
-      }
+      </ng-container>
     </div>
-  }
+  </ng-container>
 </div>

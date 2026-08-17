@@ -19,4 +19,12 @@ export class CopyResultCardComponent {
     this.refresh.emit(this.record.id);
     setTimeout(() => this.refreshing.set(false), 1000);
   }
+
+  trackByValue(index: number, item: string): string {
+    return item;
+  }
+
+  trackByCaseId(index: number, item: { caseId: string; reason: string }): string {
+    return item.caseId;
+  }
 }

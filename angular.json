@@ -12,11 +12,11 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "outputPath": "dist/angular-spidey-tool",
             "index": "src/index.html",
-            "browser": "src/main.ts",
+            "main": "src/main.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.json",
             "assets": ["src/favicon.ico", "src/assets"],
@@ -24,16 +24,25 @@
             "scripts": []
           },
           "configurations": {
-            "production": { "outputHashing": "all" },
-            "development": { "optimization": false, "sourceMap": true }
+            "production": {
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
           },
           "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
-            "production": { "buildTarget": "angular-spidey-tool:build:production" },
-            "development": { "buildTarget": "angular-spidey-tool:build:development" }
+            "production": { "browserTarget": "angular-spidey-tool:build:production" },
+            "development": { "browserTarget": "angular-spidey-tool:build:development" }
           },
           "defaultConfiguration": "development"
         }

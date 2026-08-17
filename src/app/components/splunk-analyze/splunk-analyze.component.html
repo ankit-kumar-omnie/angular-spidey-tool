@@ -51,14 +51,14 @@
       <div class="sa-field">
         <label>Log Levels</label>
         <div class="sa-level-chips">
-          @for (level of logLevels; track level) {
+          <ng-container *ngFor="let level of logLevels; trackBy: trackByLevel">
             <button
               type="button"
               class="sa-seg-btn"
               [class.active]="selectedLevels().includes(level)"
               (click)="toggleLevel(level)"
             >{{ level }}</button>
-          }
+          </ng-container>
         </div>
       </div>
     </div>
@@ -85,9 +85,9 @@
       <div class="sa-field">
         <label>Model</label>
         <select class="sa-select" [ngModel]="model()" (ngModelChange)="model.set($event)">
-          @for (m of models; track m) {
+          <ng-container *ngFor="let m of models; trackBy: trackByModel">
             <option [value]="m">{{ m }}</option>
-          }
+          </ng-container>
         </select>
       </div>
     </div>
@@ -96,21 +96,22 @@
   <!-- ── Actions ── -->
   <div class="sa-actions">
     <button class="sa-analyze-btn" (click)="analyze()" [disabled]="loading()">
-      @if (loading()) {
+      <ng-container *ngIf="loading(); else elseBlock1">
         <span class="sa-spinner"></span> Analyzing...
-      } @else {
+      </ng-container>
+      <ng-template #elseBlock1>
         Analyze Logs
-      }
+      </ng-template>
     </button>
   </div>
 
   <!-- ── Error ── -->
-  @if (error()) {
+  <ng-container *ngIf="error()">
     <div class="sa-error">{{ error() }}</div>
-  }
+  </ng-container>
 
   <!-- ── Results ── -->
-  @if (result(); as r) {
+  <ng-container *ngIf="result() as r">
     <div class="sa-results">
       <div class="sa-results-header">
         <span class="sa-section-title">Analysis Result</span>
@@ -134,44 +135,44 @@
             <span class="sa-location-label">File</span>
             <span class="sa-location-value" (click)="copyToClipboard(r.errorLocation.file)">{{ r.errorLocation.file }}</span>
           </div>
-          @if (r.errorLocation.line) {
+          <ng-container *ngIf="r.errorLocation.line">
             <div class="sa-location-item">
               <span class="sa-location-label">Line</span>
               <span class="sa-location-value">{{ r.errorLocation.line }}</span>
             </div>
-          }
-          @if (r.errorLocation.className) {
+          </ng-container>
+          <ng-container *ngIf="r.errorLocation.className">
             <div class="sa-location-item">
               <span class="sa-location-label">Class</span>
               <span class="sa-location-value">{{ r.errorLocation.className }}</span>
             </div>
-          }
-          @if (r.errorLocation.method) {
+          </ng-container>
+          <ng-container *ngIf="r.errorLocation.method">
             <div class="sa-location-item">
               <span class="sa-location-label">Method</span>
               <span class="sa-location-value">{{ r.errorLocation.method }}</span>
             </div>
-          }
+          </ng-container>
         </div>
       </div>
 
-      @if (r.suggestions.length > 0) {
+      <ng-container *ngIf="r.suggestions.length > 0">
         <div class="sa-card">
           <h4>Suggestions</h4>
-          @for (s of r.suggestions; track s.title) {
+          <ng-container *ngFor="let s of r.suggestions; trackBy: trackByTitle">
             <div class="sa-suggestion">
               <p class="sa-suggestion-title">{{ s.title }}</p>
               <p class="sa-suggestion-desc">{{ s.description }}</p>
-              @if (s.codeSnippet) {
+              <ng-container *ngIf="s.codeSnippet">
                 <div class="sa-code-block">
                   <button class="sa-code-copy-btn" (click)="copyToClipboard(s.codeSnippet)">Copy</button>
                   <pre><code>{{ s.codeSnippet }}</code></pre>
                 </div>
-              }
+              </ng-container>
             </div>
-          }
+          </ng-container>
         </div>
-      }
+      </ng-container>
 
       <div class="sa-card">
         <div class="sa-raw-header">
@@ -180,14 +181,14 @@
             {{ showRawLog() ? 'Hide' : 'Show' }}
           </button>
         </div>
-        @if (showRawLog()) {
+        <ng-container *ngIf="showRawLog()">
           <pre class="sa-raw-content">{{ r.analyzedLog | json }}</pre>
-        }
+        </ng-container>
       </div>
     </div>
-  }
+  </ng-container>
 
-  @if (searched() && !result() && !error()) {
+  <ng-container *ngIf="searched() && !result() && !error()">
     <div class="sa-empty">No results — try adjusting your filters or time range.</div>
-  }
+  </ng-container>
 </div>

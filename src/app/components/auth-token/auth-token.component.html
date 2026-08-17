@@ -3,13 +3,13 @@
     <div class="auth-dot" [class.authorized]="isAuthorized" [class.unauthorized]="!isAuthorized"></div>
     <span>{{ isAuthorized ? 'Authorized' : 'Unauthorized' }}</span>
   </div>
-  @if (isAuthorized) {
+  <ng-container *ngIf="isAuthorized">
     <button class="token-btn clear" (click)="handleClear()">Clear Token</button>
-  }
+  </ng-container>
   <button class="token-btn" (click)="handleOpen()">{{ isAuthorized ? 'Update Token' : 'Set Token' }}</button>
 </div>
 
-@if (open()) {
+<ng-container *ngIf="open()">
   <div class="modal-overlay" (click)="handleCancel()">
     <div class="modal" (click)="$event.stopPropagation()">
       <h3>Bearer Token</h3>
@@ -25,4 +25,4 @@
       </div>
     </div>
   </div>
-}
+</ng-container>

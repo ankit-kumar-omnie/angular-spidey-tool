@@ -47,30 +47,27 @@
     </button>
     <button type="button" class="db-secondary-btn" [disabled]="!caseContext.ids().length" (click)="insertCaseIds()">
       Insert Case IDs from Event Store
-      @if (caseContext.ids().length) {
-        <span class="db-badge">{{ caseContext.ids().length }}</span>
-      }
+      <span class="db-badge" *ngIf="caseContext.ids().length">{{ caseContext.ids().length }}</span>
     </button>
 
     <button type="button" class="db-run-btn" [disabled]="loading() || !hasValidInput()" (click)="run()">
-      @if (loading()) {
+      <ng-container *ngIf="loading(); else runIcon">
         <span class="db-spinner"></span>
         Running…
-      } @else {
+      </ng-container>
+      <ng-template #runIcon>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polygon points="5 3 19 12 5 21 5 3"/>
         </svg>
         Run Aggregation
-      }
+      </ng-template>
     </button>
   </div>
 
-  @if (error()) {
-    <p class="db-error">{{ error() }}</p>
-  }
+  <p class="db-error" *ngIf="error()">{{ error() }}</p>
 
   <!-- ── Results ── -->
-  @if (results().length) {
+  <ng-container *ngIf="results().length; else noResultsBlock">
     <div class="db-results-actions">
       <span class="db-count-badge">{{ results().length }} document{{ results().length !== 1 ? 's' : '' }}</span>
       <button type="button" class="db-export-btn" (click)="exportJson()">Export JSON</button>
@@ -84,45 +81,38 @@
         <button type="button" class="db-column-picker-action" (click)="clearAllColumns()">Clear</button>
       </div>
       <div class="db-column-picker-list">
-        @for (col of allColumns(); track col) {
-          <button type="button" class="db-column-chip" [class.active]="selectedColumns().has(col)" (click)="toggleColumn(col)">
-            @if (selectedColumns().has(col)) {
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
-            }
-            {{ col }}
-          </button>
-        }
+        <button type="button" *ngFor="let col of allColumns(); trackBy: trackByColumn"
+          class="db-column-chip" [class.active]="selectedColumns().has(col)" (click)="toggleColumn(col)">
+          <svg *ngIf="selectedColumns().has(col)" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          {{ col }}
+        </button>
       </div>
     </div>
 
-    @if (selectedColumnsOrdered().length) {
+    <ng-container *ngIf="selectedColumnsOrdered().length; else noColumnsBlock">
       <div class="db-table-wrap">
         <table class="db-table">
           <thead>
             <tr>
-              @for (col of selectedColumnsOrdered(); track col) {
-                <th>{{ col }}</th>
-              }
+              <th *ngFor="let col of selectedColumnsOrdered(); trackBy: trackByColumn">{{ col }}</th>
             </tr>
           </thead>
           <tbody>
-            @for (row of tableRows(); track row.id) {
-              <tr>
-                @for (col of selectedColumnsOrdered(); track col) {
-                  <td>{{ row.flat[col] }}</td>
-                }
-              </tr>
-            }
+            <tr *ngFor="let row of tableRows(); trackBy: trackById">
+              <td *ngFor="let col of selectedColumnsOrdered(); trackBy: trackByColumn">{{ row.flat[col] }}</td>
+            </tr>
           </tbody>
         </table>
       </div>
-    } @else {
+    </ng-container>
+    <ng-template #noColumnsBlock>
       <p class="db-empty">No columns selected — check at least one above.</p>
-    }
-  } @else if (searched() && !error()) {
-    <p class="db-empty">No documents matched this aggregation.</p>
-  }
+    </ng-template>
+  </ng-container>
+  <ng-template #noResultsBlock>
+    <p class="db-empty" *ngIf="searched() && !error()">No documents matched this aggregation.</p>
+  </ng-template>
 
 </div>

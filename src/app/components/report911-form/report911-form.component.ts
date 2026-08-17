@@ -212,4 +212,28 @@ export class Report911FormComponent implements OnInit {
   lookupArrayRows(data: unknown): Record<string, unknown>[] {
     return Array.isArray(data) ? (data as Record<string, unknown>[]) : [];
   }
+
+  trackByDeName(index: number, name: string): string {
+    return name;
+  }
+
+  trackByQuarter(index: number, q: Quarter): Quarter {
+    return q;
+  }
+
+  trackByPolicyVersion(index: number, v: PolicyVersion): PolicyVersion {
+    return v;
+  }
+
+  trackByKey(index: number, key: string): string {
+    return key;
+  }
+
+  trackByIndex(index: number, _row: Record<string, unknown>): number {
+    return index;
+  }
+
+  trackByEntryKey(index: number, entry: { key: string; val: string }): string {
+    return entry.key;
+  }
 }

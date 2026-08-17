@@ -186,6 +186,14 @@ export class GitBranchManagerComponent {
     return this.extractTenant(branch);
   }
 
+  trackByBranch(index: number, item: string): string {
+    return item;
+  }
+
+  trackBySourceBranch(index: number, item: BranchEntry): string {
+    return item.sourceBranch;
+  }
+
   private extractTenant(branch: string): string {
     // release/vr-azrsa-20260601 -> azrsa
     const match = branch.match(/vr-([a-zA-Z]+)-/);

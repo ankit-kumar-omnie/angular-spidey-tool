@@ -7,181 +7,187 @@
     <button type="button" class="tab-btn" [class.active]="mode()==='results'" (click)="mode.set('results')">Tool Result</button>
   </div>
 
-  @if (mode() === 'results') {
+  <ng-container *ngIf="mode() === 'results'; else elseIfBlock1">
     <app-report911-results />
-  } @else if (mode() === 'lookup') {
-    <div class="form-grid">
-      <div class="form-group">
-        <label>Case ID</label>
-        <input required [ngModel]="lookup().caseId" (ngModelChange)="setLookupField('caseId',$event)" placeholder="case123" />
-      </div>
-      <div class="form-group">
-        <label>DE Name</label>
-        <div class="de-checkbox-select" #lookupDeContainer>
-          <div class="de-checkbox-trigger" (click)="toggleLookupDeDropdown()">
-            @if (!lookup().deName) {
-              <span class="de-placeholder">Select DE...</span>
-            } @else {
-              <span class="de-single-val">{{ lookup().deName }}</span>
-            }
-            <span class="de-arrow">{{ lookupDeOpen() ? '▴' : '▾' }}</span>
-          </div>
-          @if (lookupDeOpen()) {
-            <div class="de-dropdown">
-              <input
-                class="de-search"
-                placeholder="Search DE names..."
-                [ngModel]="lookupDeSearch()"
-                (ngModelChange)="lookupDeSearch.set($event)"
-                (click)="$event.stopPropagation()"
-                autofocus />
-              <div class="de-options">
-                @if (!filteredLookupDeOptions.length) {
-                  <p class="de-empty">No results</p>
-                }
-                @for (d of filteredLookupDeOptions; track d) {
-                  <div
-                    class="de-option"
-                    [class.de-option--selected]="d === lookup().deName"
-                    (mousedown)="$event.preventDefault(); selectLookupDe(d)">
-                    <span class="de-option-check">{{ d === lookup().deName ? '✓' : '' }}</span>
-                    {{ d }}
-                  </div>
-                }
-              </div>
-            </div>
-          }
+  </ng-container>
+  <ng-template #elseIfBlock1>
+    <ng-container *ngIf="mode() === 'lookup'; else elseBlock1">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Case ID</label>
+          <input required [ngModel]="lookup().caseId" (ngModelChange)="setLookupField('caseId',$event)" placeholder="case123" />
         </div>
-      </div>
-      <div class="form-group">
-        <label>Program Year</label>
-        <input required type="number" [ngModel]="lookup().programYear" (ngModelChange)="setLookupField('programYear',$event)" />
-      </div>
-      <div class="form-group">
-        <label>Quarter</label>
-        <select [ngModel]="lookup().quarter" (ngModelChange)="setLookupField('quarter',$event)">
-          @for (q of quarters; track q) { <option [value]="q">{{ q }}</option> }
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Policy Version</label>
-        <select [ngModel]="lookup().policyVersion" (ngModelChange)="setLookupField('policyVersion',$event)">
-          @for (v of policyVersions; track v) { <option [value]="v">{{ v }}</option> }
-        </select>
-      </div>
-      @if (lookupError()) { <p class="error-msg">{{ lookupError() }}</p> }
-      <button type="button" class="submit-btn" [disabled]="loading()" (click)="handleLookup()">
-        {{ loading() ? 'Fetching...' : 'Fetch Data' }}
-      </button>
-    </div>
-
-    @if (lookupResult() !== null) {
-      <div class="lookup-result">
-        @if (isLookupArray(lookupResult())) {
-          <div class="lookup-table-wrapper">
-            <table class="lookup-table">
-              <thead><tr>@for (k of lookupArrayKeys(lookupResult()); track k) { <th>{{ k }}</th> }</tr></thead>
-              <tbody>
-                @for (row of lookupArrayRows(lookupResult()); track $index) {
-                  <tr>@for (k of lookupArrayKeys(lookupResult()); track k) { <td>{{ row[k] ?? '—' }}</td> }</tr>
-                }
-              </tbody>
-            </table>
-          </div>
-        } @else {
-          <div class="lookup-kv">
-            @for (entry of lookupEntries(lookupResult()); track entry.key) {
-              <div class="lookup-kv-row">
-                <span class="lookup-kv-key">{{ entry.key }}</span>
-                <span class="lookup-kv-val">{{ entry.val }}</span>
-              </div>
-            }
-          </div>
-        }
-      </div>
-    }
-  } @else {
-    <div class="form-grid">
-      @if (mode() !== 'activation') {
-        <div class="form-group full-width">
-          <label>DE Name(s) <small>select up to {{ maxDe }} — {{ form().deNames.length }}/{{ maxDe }} selected</small></label>
-          <div class="de-checkbox-select" #deDropdownContainer>
-            <div class="de-checkbox-trigger" (click)="toggleDeDropdown()">
-              @if (!form().deNames.length) {
-                <span class="de-placeholder">Select DE names...</span>
-              } @else {
-                <div class="de-tags">
-                  @for (d of form().deNames; track d) {
-                    <span class="de-tag">{{ d }}
-                      <button type="button" (mousedown)="$event.stopPropagation(); removeDe(d)">×</button>
-                    </span>
-                  }
-                </div>
-              }
-                        <span class="de-arrow">{{ deDropdownOpen() ? '▴' : '▾' }}</span>
+        <div class="form-group">
+          <label>DE Name</label>
+          <div class="de-checkbox-select" #lookupDeContainer>
+            <div class="de-checkbox-trigger" (click)="toggleLookupDeDropdown()">
+              <ng-container *ngIf="!lookup().deName; else elseBlock2">
+                <span class="de-placeholder">Select DE...</span>
+              </ng-container>
+              <ng-template #elseBlock2>
+                <span class="de-single-val">{{ lookup().deName }}</span>
+              </ng-template>
+              <span class="de-arrow">{{ lookupDeOpen() ? '▴' : '▾' }}</span>
             </div>
-            @if (deDropdownOpen()) {
+            <ng-container *ngIf="lookupDeOpen()">
               <div class="de-dropdown">
-                <input class="de-search" placeholder="Search..." [ngModel]="deSearch()" (ngModelChange)="deSearch.set($event)" (click)="$event.stopPropagation()" />
+                <input
+                  class="de-search"
+                  placeholder="Search DE names..."
+                  [ngModel]="lookupDeSearch()"
+                  (ngModelChange)="lookupDeSearch.set($event)"
+                  (click)="$event.stopPropagation()"
+                  autofocus />
                 <div class="de-options">
-                  @if (!filteredDeOptions.length) { <p class="de-empty">No results</p> }
-                  @for (d of filteredDeOptions; track d) {
-                    <label class="de-option" [class.disabled]="!form().deNames.includes(d) && form().deNames.length >= maxDe">
-                      <input type="checkbox" [checked]="form().deNames.includes(d)"
-                        [disabled]="!form().deNames.includes(d) && form().deNames.length >= maxDe"
-                        (change)="toggleDe(d)" />
+                  <ng-container *ngIf="!filteredLookupDeOptions.length">
+                    <p class="de-empty">No results</p>
+                  </ng-container>
+                  <ng-container *ngFor="let d of filteredLookupDeOptions; trackBy: trackByDeName">
+                    <div
+                      class="de-option"
+                      [class.de-option--selected]="d === lookup().deName"
+                      (mousedown)="$event.preventDefault(); selectLookupDe(d)">
+                      <span class="de-option-check">{{ d === lookup().deName ? '✓' : '' }}</span>
                       {{ d }}
-                    </label>
-                  }
+                    </div>
+                  </ng-container>
                 </div>
               </div>
-            }
+            </ng-container>
           </div>
         </div>
-      }
-
-      <div class="form-group">
-        <label>Program Year</label>
-        <input required type="number" [ngModel]="form().programYear" (ngModelChange)="setField('programYear',$event)" />
-      </div>
-      <div class="form-group">
-        <label>Quarter</label>
-        <select [ngModel]="form().quarter" (ngModelChange)="setField('quarter',$event)">
-          @for (q of quarters; track q) { <option [value]="q">{{ q }}</option> }
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Policy Version</label>
-        <select [ngModel]="form().policyVersion" (ngModelChange)="setField('policyVersion',$event)">
-          @for (v of policyVersions; track v) { <option [value]="v">{{ v }}</option> }
-        </select>
-      </div>
-      @if (mode() === 'copy') {
         <div class="form-group">
-          <label>Effective Date <small>optional</small></label>
-          <input type="date" [ngModel]="form().effectiveDate" (ngModelChange)="setField('effectiveDate',$event)" />
+          <label>Program Year</label>
+          <input required type="number" [ngModel]="lookup().programYear" (ngModelChange)="setLookupField('programYear',$event)" />
         </div>
-      }
-      @if (mode() === 'activation') {
         <div class="form-group">
-          <label>Action</label>
-          <select [ngModel]="form().isActive" (ngModelChange)="setField('isActive',$event)">
-            <option value="true">Activate (Report to 911)</option>
-            <option value="false">Deactivate (Un-report from 911)</option>
-            <option value="forceFulActivate">Force Activate (bypass rules)</option>
-            <option value="forceFulDeactivate">Force Deactivate (bypass rules)</option>
+          <label>Quarter</label>
+          <select [ngModel]="lookup().quarter" (ngModelChange)="setLookupField('quarter',$event)">
+            <ng-container *ngFor="let q of quarters; trackBy: trackByQuarter"> <option [value]="q">{{ q }}</option> </ng-container>
           </select>
         </div>
-      }
-      <div class="form-group full-width">
-        <label>Case IDs <small>one per line or comma separated</small></label>
-        <textarea required rows="4" [ngModel]="form().caseIdsRaw" (ngModelChange)="setField('caseIdsRaw',$event)" placeholder="case123&#10;case456"></textarea>
+        <div class="form-group">
+          <label>Policy Version</label>
+          <select [ngModel]="lookup().policyVersion" (ngModelChange)="setLookupField('policyVersion',$event)">
+            <ng-container *ngFor="let v of policyVersions; trackBy: trackByPolicyVersion"> <option [value]="v">{{ v }}</option> </ng-container>
+          </select>
+        </div>
+        <ng-container *ngIf="lookupError()"> <p class="error-msg">{{ lookupError() }}</p> </ng-container>
+        <button type="button" class="submit-btn" [disabled]="loading()" (click)="handleLookup()">
+          {{ loading() ? 'Fetching...' : 'Fetch Data' }}
+        </button>
       </div>
-      @if (error()) { <p class="error-msg">{{ error() }}</p> }
-      <button type="button" [disabled]="loading()" class="submit-btn" [class.unreport]="isUnreportStyle" (click)="handleSubmit()">
-        {{ submitLabel }}
-      </button>
-    </div>
-  }
-</div>
 
+      <ng-container *ngIf="lookupResult() !== null">
+        <div class="lookup-result">
+          <ng-container *ngIf="isLookupArray(lookupResult()); else elseBlock3">
+            <div class="lookup-table-wrapper">
+              <table class="lookup-table">
+                <thead><tr><ng-container *ngFor="let k of lookupArrayKeys(lookupResult()); trackBy: trackByKey"> <th>{{ k }}</th> </ng-container></tr></thead>
+                <tbody>
+                  <ng-container *ngFor="let row of lookupArrayRows(lookupResult()); trackBy: trackByIndex">
+                    <tr><ng-container *ngFor="let k of lookupArrayKeys(lookupResult()); trackBy: trackByKey"> <td>{{ row[k] ?? '—' }}</td> </ng-container></tr>
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
+          </ng-container>
+          <ng-template #elseBlock3>
+            <div class="lookup-kv">
+              <ng-container *ngFor="let entry of lookupEntries(lookupResult()); trackBy: trackByEntryKey">
+                <div class="lookup-kv-row">
+                  <span class="lookup-kv-key">{{ entry.key }}</span>
+                  <span class="lookup-kv-val">{{ entry.val }}</span>
+                </div>
+              </ng-container>
+            </div>
+          </ng-template>
+        </div>
+      </ng-container>
+    </ng-container>
+    <ng-template #elseBlock1>
+      <div class="form-grid">
+        <ng-container *ngIf="mode() !== 'activation'">
+          <div class="form-group full-width">
+            <label>DE Name(s) <small>select up to {{ maxDe }} — {{ form().deNames.length }}/{{ maxDe }} selected</small></label>
+            <div class="de-checkbox-select" #deDropdownContainer>
+              <div class="de-checkbox-trigger" (click)="toggleDeDropdown()">
+                <ng-container *ngIf="!form().deNames.length; else elseBlock4">
+                  <span class="de-placeholder">Select DE names...</span>
+                </ng-container>
+                <ng-template #elseBlock4>
+                  <div class="de-tags">
+                    <ng-container *ngFor="let d of form().deNames; trackBy: trackByDeName">
+                      <span class="de-tag">{{ d }}
+                        <button type="button" (mousedown)="$event.stopPropagation(); removeDe(d)">×</button>
+                      </span>
+                    </ng-container>
+                  </div>
+                </ng-template>
+                          <span class="de-arrow">{{ deDropdownOpen() ? '▴' : '▾' }}</span>
+              </div>
+              <ng-container *ngIf="deDropdownOpen()">
+                <div class="de-dropdown">
+                  <input class="de-search" placeholder="Search..." [ngModel]="deSearch()" (ngModelChange)="deSearch.set($event)" (click)="$event.stopPropagation()" />
+                  <div class="de-options">
+                    <ng-container *ngIf="!filteredDeOptions.length"> <p class="de-empty">No results</p> </ng-container>
+                    <ng-container *ngFor="let d of filteredDeOptions; trackBy: trackByDeName">
+                      <label class="de-option" [class.disabled]="!form().deNames.includes(d) && form().deNames.length >= maxDe">
+                        <input type="checkbox" [checked]="form().deNames.includes(d)"
+                          [disabled]="!form().deNames.includes(d) && form().deNames.length >= maxDe"
+                          (change)="toggleDe(d)" />
+                        {{ d }}
+                      </label>
+                    </ng-container>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </ng-container>
+
+        <div class="form-group">
+          <label>Program Year</label>
+          <input required type="number" [ngModel]="form().programYear" (ngModelChange)="setField('programYear',$event)" />
+        </div>
+        <div class="form-group">
+          <label>Quarter</label>
+          <select [ngModel]="form().quarter" (ngModelChange)="setField('quarter',$event)">
+            <ng-container *ngFor="let q of quarters; trackBy: trackByQuarter"> <option [value]="q">{{ q }}</option> </ng-container>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Policy Version</label>
+          <select [ngModel]="form().policyVersion" (ngModelChange)="setField('policyVersion',$event)">
+            <ng-container *ngFor="let v of policyVersions; trackBy: trackByPolicyVersion"> <option [value]="v">{{ v }}</option> </ng-container>
+          </select>
+        </div>
+        <ng-container *ngIf="mode() === 'copy'">
+          <div class="form-group">
+            <label>Effective Date <small>optional</small></label>
+            <input type="date" [ngModel]="form().effectiveDate" (ngModelChange)="setField('effectiveDate',$event)" />
+          </div>
+        </ng-container>
+        <ng-container *ngIf="mode() === 'activation'">
+          <div class="form-group">
+            <label>Action</label>
+            <select [ngModel]="form().isActive" (ngModelChange)="setField('isActive',$event)">
+              <option value="true">Activate (Report to 911)</option>
+              <option value="false">Deactivate (Un-report from 911)</option>
+              <option value="forceFulActivate">Force Activate (bypass rules)</option>
+              <option value="forceFulDeactivate">Force Deactivate (bypass rules)</option>
+            </select>
+          </div>
+        </ng-container>
+        <div class="form-group full-width">
+          <label>Case IDs <small>one per line or comma separated</small></label>
+          <textarea required rows="4" [ngModel]="form().caseIdsRaw" (ngModelChange)="setField('caseIdsRaw',$event)" placeholder="case123&#10;case456"></textarea>
+        </div>
+        <ng-container *ngIf="error()"> <p class="error-msg">{{ error() }}</p> </ng-container>
+        <button type="button" [disabled]="loading()" class="submit-btn" [class.unreport]="isUnreportStyle" (click)="handleSubmit()">
+          {{ submitLabel }}
+        </button>
+      </div>
+    </ng-template>
+  </ng-template>
+</div>

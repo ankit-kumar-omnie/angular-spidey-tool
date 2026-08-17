@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ResultRecord } from '../../services/report911.service';
+import { ResultRecord, CaseSkipped } from '../../services/report911.service';
 
 @Component({
   selector: 'app-result-card',
@@ -20,5 +20,13 @@ export class ResultCardComponent {
     this.refreshing.set(true);
     this.refresh.emit(this.record.id);
     setTimeout(() => this.refreshing.set(false), 1000);
+  }
+
+  trackByValue(index: number, item: string): string {
+    return item;
+  }
+
+  trackByCaseId(index: number, item: CaseSkipped): string {
+    return item.caseId;
   }
 }

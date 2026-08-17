@@ -1,71 +1,70 @@
 <div class="es-root">
 
   <!-- ── SPIDEY LOADER ── -->
-  @if (loading()) {
-    <div class="es-loader-overlay">
-      @if (theme.theme() === 'spidey') {
-        <div class="spidey-loader">
-          <div class="spidey-glow"></div>
-          <div class="web-scene">
-            <div class="web-ring web-ring--outer"></div>
-            <div class="web-ring web-ring--mid"></div>
-            <div class="web-ring web-ring--inner"></div>
-            <div class="web-3d-wrap">
-              <svg class="web-3d-svg" viewBox="0 0 120 120">
-                <line x1="60" y1="60" x2="60"  y2="4"   class="web-line"/>
-                <line x1="60" y1="60" x2="102" y2="18"  class="web-line"/>
-                <line x1="60" y1="60" x2="116" y2="60"  class="web-line"/>
-                <line x1="60" y1="60" x2="102" y2="102" class="web-line"/>
-                <line x1="60" y1="60" x2="60"  y2="116" class="web-line"/>
-                <line x1="60" y1="60" x2="18"  y2="102" class="web-line"/>
-                <line x1="60" y1="60" x2="4"   y2="60"  class="web-line"/>
-                <line x1="60" y1="60" x2="18"  y2="18"  class="web-line"/>
-                <circle cx="60" cy="60" r="14" class="web-circle"/>
-                <circle cx="60" cy="60" r="28" class="web-circle"/>
-                <circle cx="60" cy="60" r="42" class="web-circle"/>
-                <circle cx="60" cy="60" r="56" class="web-circle web-circle--outer"/>
-                <circle cx="60" cy="60" r="5"  class="web-center"/>
-                <circle cx="60" cy="60" r="5"  class="web-center-pulse"/>
-              </svg>
-            </div>
-            <div class="spider-drop-wrap">
-              <div class="spider-thread"></div>
-              <div class="spider-body">
-                <div class="spider-head"></div>
-                <div class="spider-abdomen"></div>
-                <div class="spider-legs">
-                  <span></span><span></span><span></span><span></span>
-                  <span></span><span></span><span></span><span></span>
-                </div>
+  <div class="es-loader-overlay" *ngIf="loading()">
+    <ng-container *ngIf="theme.theme() === 'spidey'; else defaultLoaderBlock">
+      <div class="spidey-loader">
+        <div class="spidey-glow"></div>
+        <div class="web-scene">
+          <div class="web-ring web-ring--outer"></div>
+          <div class="web-ring web-ring--mid"></div>
+          <div class="web-ring web-ring--inner"></div>
+          <div class="web-3d-wrap">
+            <svg class="web-3d-svg" viewBox="0 0 120 120">
+              <line x1="60" y1="60" x2="60"  y2="4"   class="web-line"/>
+              <line x1="60" y1="60" x2="102" y2="18"  class="web-line"/>
+              <line x1="60" y1="60" x2="116" y2="60"  class="web-line"/>
+              <line x1="60" y1="60" x2="102" y2="102" class="web-line"/>
+              <line x1="60" y1="60" x2="60"  y2="116" class="web-line"/>
+              <line x1="60" y1="60" x2="18"  y2="102" class="web-line"/>
+              <line x1="60" y1="60" x2="4"   y2="60"  class="web-line"/>
+              <line x1="60" y1="60" x2="18"  y2="18"  class="web-line"/>
+              <circle cx="60" cy="60" r="14" class="web-circle"/>
+              <circle cx="60" cy="60" r="28" class="web-circle"/>
+              <circle cx="60" cy="60" r="42" class="web-circle"/>
+              <circle cx="60" cy="60" r="56" class="web-circle web-circle--outer"/>
+              <circle cx="60" cy="60" r="5"  class="web-center"/>
+              <circle cx="60" cy="60" r="5"  class="web-center-pulse"/>
+            </svg>
+          </div>
+          <div class="spider-drop-wrap">
+            <div class="spider-thread"></div>
+            <div class="spider-body">
+              <div class="spider-head"></div>
+              <div class="spider-abdomen"></div>
+              <div class="spider-legs">
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
               </div>
             </div>
           </div>
-          <p class="spidey-loader-text">
-            <span class="spidey-loader-char" style="--i:0">F</span>
-            <span class="spidey-loader-char" style="--i:1">e</span>
-            <span class="spidey-loader-char" style="--i:2">t</span>
-            <span class="spidey-loader-char" style="--i:3">c</span>
-            <span class="spidey-loader-char" style="--i:4">h</span>
-            <span class="spidey-loader-char" style="--i:5">i</span>
-            <span class="spidey-loader-char" style="--i:6">n</span>
-            <span class="spidey-loader-char" style="--i:7">g</span>
-            <span class="spidey-loader-char" style="--i:8">.</span>
-            <span class="spidey-loader-char" style="--i:9">.</span>
-            <span class="spidey-loader-char" style="--i:10">.</span>
-          </p>
         </div>
-      } @else {
-        <div class="es-default-loader">
-          <div class="es-spinner">
-            <div class="es-ring"></div>
-            <div class="es-ring"></div>
-            <div class="es-ring"></div>
-          </div>
-          <p class="es-loader-text">Fetching events…</p>
+        <p class="spidey-loader-text">
+          <span class="spidey-loader-char" style="--i:0">F</span>
+          <span class="spidey-loader-char" style="--i:1">e</span>
+          <span class="spidey-loader-char" style="--i:2">t</span>
+          <span class="spidey-loader-char" style="--i:3">c</span>
+          <span class="spidey-loader-char" style="--i:4">h</span>
+          <span class="spidey-loader-char" style="--i:5">i</span>
+          <span class="spidey-loader-char" style="--i:6">n</span>
+          <span class="spidey-loader-char" style="--i:7">g</span>
+          <span class="spidey-loader-char" style="--i:8">.</span>
+          <span class="spidey-loader-char" style="--i:9">.</span>
+          <span class="spidey-loader-char" style="--i:10">.</span>
+        </p>
+      </div>
+    </ng-container>
+    <ng-template #defaultLoaderBlock>
+      <div class="es-default-loader">
+        <div class="es-spinner">
+          <div class="es-ring"></div>
+          <div class="es-ring"></div>
+          <div class="es-ring"></div>
         </div>
-      }
-    </div>
-  }
+        <p class="es-loader-text">Fetching events…</p>
+      </div>
+    </ng-template>
+  </div>
 
   <!-- ── Build Stream ID form ── -->
   <div class="es-builder">
@@ -97,14 +96,12 @@
       <div class="es-field es-field--aggregate">
         <label>Aggregate Type</label>
         <div class="es-seg-group es-seg-group--wrap">
-          @for (a of aggregateTypes; track a.value) {
-            <button type="button"
-              class="es-seg-btn"
-              [class.active]="aggregatePreset() === a.value"
-              (click)="selectAggregatePreset(a.value)">
-              {{ a.label }}
-            </button>
-          }
+          <button type="button" *ngFor="let a of aggregateTypes; trackBy: trackByAggregateType"
+            class="es-seg-btn"
+            [class.active]="aggregatePreset() === a.value"
+            (click)="selectAggregatePreset(a.value)">
+            {{ a.label }}
+          </button>
           <button type="button"
             class="es-seg-btn"
             [class.active]="aggregatePreset() === customAggregateKey"
@@ -112,12 +109,10 @@
             Custom
           </button>
         </div>
-        @if (aggregatePreset() === customAggregateKey) {
-          <input class="es-input es-input--mono es-custom-aggregate-input"
-            placeholder="e.g. caseService"
-            [ngModel]="customAggregate()"
-            (ngModelChange)="setCustomAggregate($event)" />
-        }
+        <input class="es-input es-input--mono es-custom-aggregate-input" *ngIf="aggregatePreset() === customAggregateKey"
+          placeholder="e.g. caseService"
+          [ngModel]="customAggregate()"
+          (ngModelChange)="setCustomAggregate($event)" />
       </div>
 
       <!-- Aggregate ID -->
@@ -138,14 +133,12 @@
           placeholder="Auto-generated from form fields..."
           [ngModel]="effectiveStreamId()"
           (ngModelChange)="setEditableStreamId($event)" />
-        @if (userEditedStreamId()) {
-          <button class="es-reset-btn" (click)="resetStreamId()" title="Reset to auto-generated">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-              <path d="M3 3v5h5"/>
-            </svg>
-          </button>
-        }
+        <button class="es-reset-btn" *ngIf="userEditedStreamId()" (click)="resetStreamId()" title="Reset to auto-generated">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+          </svg>
+        </button>
         <button class="es-copy-btn" (click)="copyStreamId()" title="Copy">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
@@ -165,7 +158,7 @@
         Fetch Events
       </button>
 
-      @if (events().length) {
+      <ng-container *ngIf="events().length">
         <span class="es-count-badge">{{ events().length }} event{{ events().length !== 1 ? 's' : '' }}</span>
 
         <!-- Export button -->
@@ -176,9 +169,7 @@
             <line x1="12" y1="15" x2="12" y2="3"/>
           </svg>
           Export JSON
-          @if (hasActiveFilters()) {
-            <span class="es-export-filtered">(filtered)</span>
-          }
+          <span class="es-export-filtered" *ngIf="hasActiveFilters()">(filtered)</span>
         </button>
 
         <!-- Export to Excel -->
@@ -189,104 +180,88 @@
             <line x1="12" y1="15" x2="12" y2="3"/>
           </svg>
           Export to Excel
-          @if (hasActiveFilters()) {
-            <span class="es-export-filtered">(filtered)</span>
-          }
+          <span class="es-export-filtered" *ngIf="hasActiveFilters()">(filtered)</span>
         </button>
-      }
+      </ng-container>
     </div>
 
-    @if (error()) {
-      <p class="es-error">{{ error() }}</p>
-    }
+    <p class="es-error" *ngIf="error()">{{ error() }}</p>
   </div>
 
   <!-- ── Filter bar ── -->
-  @if (events().length) {
-    <div class="es-filter-bar">
-      <!-- Text search -->
-      <div class="es-filter-search">
-        <svg class="es-filter-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-        <input class="es-input es-filter-input"
-          placeholder="Search type, ID, user, payload…"
-          [ngModel]="filterText()"
-          (ngModelChange)="filterText.set($event); onFilterChange()" />
-        @if (filterText()) {
-          <button class="es-filter-clear" (click)="filterText.set(''); onFilterChange()" title="Clear">✕</button>
-        }
-      </div>
-
-      <!-- Event type dropdown -->
-      <select class="es-input es-type-select"
-        [ngModel]="filterType()"
-        (ngModelChange)="filterType.set($event); onFilterChange()">
-        <option value="">All event types</option>
-        @for (t of eventTypes(); track t) {
-          <option [value]="t">{{ t }}</option>
-        }
-      </select>
-
-      <!-- Date range -->
-      <div class="es-filter-dates">
-        <div class="es-filter-datetime-group">
-          <label class="es-filter-date-field">
-            <span class="es-filter-date-label">From Date</span>
-            <input type="date" class="es-input es-date-input"
-              [ngModel]="filterDateFrom()"
-              (ngModelChange)="filterDateFrom.set($event); onFilterChange()" />
-          </label>
-          <label class="es-filter-date-field">
-            <span class="es-filter-date-label">From Time</span>
-            <input type="time" step="1" class="es-input es-time-input"
-              [ngModel]="filterTimeFrom()"
-              (ngModelChange)="filterTimeFrom.set($event); onFilterChange()"
-              placeholder="00:00:00" />
-          </label>
-        </div>
-        <div class="es-filter-datetime-group">
-          <label class="es-filter-date-field">
-            <span class="es-filter-date-label">To Date</span>
-            <input type="date" class="es-input es-date-input"
-              [ngModel]="filterDateTo()"
-              (ngModelChange)="filterDateTo.set($event); onFilterChange()" />
-          </label>
-          <label class="es-filter-date-field">
-            <span class="es-filter-date-label">To Time</span>
-            <input type="time" step="1" class="es-input es-time-input"
-              [ngModel]="filterTimeTo()"
-              (ngModelChange)="filterTimeTo.set($event); onFilterChange()"
-              placeholder="23:59:59" />
-          </label>
-        </div>
-        @if (filterDateFrom() || filterTimeFrom() || filterDateTo() || filterTimeTo()) {
-          <button type="button" class="es-date-clear-btn" (click)="clearDateFilter()" title="Clear date & time">✕</button>
-        }
-      </div>
-
-      <span class="es-filter-count">
-        {{ filteredEvents().length }} / {{ events().length }}
-      </span>
+  <div class="es-filter-bar" *ngIf="events().length">
+    <!-- Text search -->
+    <div class="es-filter-search">
+      <svg class="es-filter-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input class="es-input es-filter-input"
+        placeholder="Search type, ID, user, payload…"
+        [ngModel]="filterText()"
+        (ngModelChange)="filterText.set($event); onFilterChange()" />
+      <button class="es-filter-clear" *ngIf="filterText()" (click)="filterText.set(''); onFilterChange()" title="Clear">✕</button>
     </div>
-  }
+
+    <!-- Event type dropdown -->
+    <select class="es-input es-type-select"
+      [ngModel]="filterType()"
+      (ngModelChange)="filterType.set($event); onFilterChange()">
+      <option value="">All event types</option>
+      <option *ngFor="let t of eventTypes(); trackBy: trackByValue" [value]="t">{{ t }}</option>
+    </select>
+
+    <!-- Date range -->
+    <div class="es-filter-dates">
+      <div class="es-filter-datetime-group">
+        <label class="es-filter-date-field">
+          <span class="es-filter-date-label">From Date</span>
+          <input type="date" class="es-input es-date-input"
+            [ngModel]="filterDateFrom()"
+            (ngModelChange)="filterDateFrom.set($event); onFilterChange()" />
+        </label>
+        <label class="es-filter-date-field">
+          <span class="es-filter-date-label">From Time</span>
+          <input type="time" step="1" class="es-input es-time-input"
+            [ngModel]="filterTimeFrom()"
+            (ngModelChange)="filterTimeFrom.set($event); onFilterChange()"
+            placeholder="00:00:00" />
+        </label>
+      </div>
+      <div class="es-filter-datetime-group">
+        <label class="es-filter-date-field">
+          <span class="es-filter-date-label">To Date</span>
+          <input type="date" class="es-input es-date-input"
+            [ngModel]="filterDateTo()"
+            (ngModelChange)="filterDateTo.set($event); onFilterChange()" />
+        </label>
+        <label class="es-filter-date-field">
+          <span class="es-filter-date-label">To Time</span>
+          <input type="time" step="1" class="es-input es-time-input"
+            [ngModel]="filterTimeTo()"
+            (ngModelChange)="filterTimeTo.set($event); onFilterChange()"
+            placeholder="23:59:59" />
+        </label>
+      </div>
+      <button type="button" class="es-date-clear-btn" *ngIf="filterDateFrom() || filterTimeFrom() || filterDateTo() || filterTimeTo()" (click)="clearDateFilter()" title="Clear date & time">✕</button>
+    </div>
+
+    <span class="es-filter-count">
+      {{ filteredEvents().length }} / {{ events().length }}
+    </span>
+  </div>
 
   <!-- ── View toggle ── -->
-  @if (events().length) {
-    <div class="es-seg-group es-seg-group--wrap">
-      <button type="button" class="es-seg-btn" [class.active]="viewMode() === 'timeline'" (click)="setViewMode('timeline')">Timeline</button>
-      <button type="button" class="es-seg-btn" [class.active]="viewMode() === 'table'" (click)="setViewMode('table')">Table (Custom Columns)</button>
-      <button type="button" class="es-seg-btn" [class.active]="viewMode() === 'aggregation'" (click)="setViewMode('aggregation')">DB Aggregation</button>
-    </div>
-  }
+  <div class="es-seg-group es-seg-group--wrap" *ngIf="events().length">
+    <button type="button" class="es-seg-btn" [class.active]="viewMode() === 'timeline'" (click)="setViewMode('timeline')">Timeline</button>
+    <button type="button" class="es-seg-btn" [class.active]="viewMode() === 'table'" (click)="setViewMode('table')">Table (Custom Columns)</button>
+    <button type="button" class="es-seg-btn" [class.active]="viewMode() === 'aggregation'" (click)="setViewMode('aggregation')">DB Aggregation</button>
+  </div>
 
   <!-- ── DB Aggregation, on the case IDs from this fetch ── -->
-  @if (viewMode() === 'aggregation' && events().length) {
-    <app-db-aggregation />
-  }
+  <app-db-aggregation *ngIf="viewMode() === 'aggregation' && events().length" />
 
   <!-- ── Event timeline ── -->
-  @if (viewMode() !== 'aggregation' && pagedEvents().length) {
+  <ng-container *ngIf="viewMode() !== 'aggregation' && pagedEvents().length; else noEventsOrFilterBlock">
 
     <!-- Sort bar -->
     <div class="es-sort-bar">
@@ -299,9 +274,7 @@
           <polyline points="8 18 12 22 16 18"/>
         </svg>
         #
-        @if (sortField() === 'number') {
-          <span class="es-sort-dir">{{ sortDir() === 'asc' ? '↑' : '↓' }}</span>
-        }
+        <span class="es-sort-dir" *ngIf="sortField() === 'number'">{{ sortDir() === 'asc' ? '↑' : '↓' }}</span>
       </button>
       <button type="button" class="es-sort-btn"
         [class.active]="sortField() === 'type'"
@@ -310,9 +283,7 @@
           <polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/>
         </svg>
         Event Type
-        @if (sortField() === 'type') {
-          <span class="es-sort-dir">{{ sortDir() === 'asc' ? '↑' : '↓' }}</span>
-        }
+        <span class="es-sort-dir" *ngIf="sortField() === 'type'">{{ sortDir() === 'asc' ? '↑' : '↓' }}</span>
       </button>
       <button type="button" class="es-sort-btn"
         [class.active]="sortField() === 'date'"
@@ -321,14 +292,12 @@
           <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
         </svg>
         Date
-        @if (sortField() === 'date') {
-          <span class="es-sort-dir">{{ sortDir() === 'asc' ? '↑' : '↓' }}</span>
-        }
+        <span class="es-sort-dir" *ngIf="sortField() === 'date'">{{ sortDir() === 'asc' ? '↑' : '↓' }}</span>
       </button>
     </div>
 
-    @if (viewMode() === 'table') {
-      @if (isRollbackStream()) {
+    <ng-container *ngIf="viewMode() === 'table'; else timelineViewBlock">
+      <ng-container *ngIf="isRollbackStream(); else customColumnsTableBlock">
         <div class="es-table-wrap">
           <table class="es-flat-table">
             <thead>
@@ -339,29 +308,24 @@
                 <th>Rollback To</th>
                 <th>Created At</th>
                 <th>User</th>
-                @for (col of caseColumns(); track col) {
-                  <th>{{ col }}</th>
-                }
+                <th *ngFor="let col of caseColumns(); trackBy: trackByValue">{{ col }}</th>
               </tr>
             </thead>
             <tbody>
-              @for (row of rollbackRows(); track row.id) {
-                <tr>
-                  <td class="es-mono">{{ row.aggregateId }}</td>
-                  <td>{{ row.currentStatus }}</td>
-                  <td>{{ row.statusDate }}</td>
-                  <td>{{ row.targetStatus }}</td>
-                  <td>{{ row.createdAt }}</td>
-                  <td>{{ row.userName }}</td>
-                  @for (col of caseColumns(); track col) {
-                    <td>{{ row.caseFlat[col] }}</td>
-                  }
-                </tr>
-              }
+              <tr *ngFor="let row of rollbackRows(); trackBy: trackById">
+                <td class="es-mono">{{ row.aggregateId }}</td>
+                <td>{{ row.currentStatus }}</td>
+                <td>{{ row.statusDate }}</td>
+                <td>{{ row.targetStatus }}</td>
+                <td>{{ row.createdAt }}</td>
+                <td>{{ row.userName }}</td>
+                <td *ngFor="let col of caseColumns(); trackBy: trackByValue">{{ row.caseFlat[col] }}</td>
+              </tr>
             </tbody>
           </table>
         </div>
-      } @else {
+      </ng-container>
+      <ng-template #customColumnsTableBlock>
         <div class="es-column-picker">
           <div class="es-column-picker-header">
             <span class="es-column-picker-label">Columns ({{ selectedColumnsOrdered().length }} / {{ allColumns().length }})</span>
@@ -369,48 +333,39 @@
             <button type="button" class="es-column-picker-action" (click)="clearAllColumns()">Clear</button>
           </div>
           <div class="es-column-picker-list">
-            @for (col of allColumns(); track col) {
-              <button type="button" class="es-column-chip" [class.active]="selectedColumns().has(col)" (click)="toggleColumn(col)">
-                @if (selectedColumns().has(col)) {
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                }
-                {{ columnLabel(col) }}
-              </button>
-            }
+            <button type="button" *ngFor="let col of allColumns(); trackBy: trackByValue" class="es-column-chip" [class.active]="selectedColumns().has(col)" (click)="toggleColumn(col)">
+              <svg *ngIf="selectedColumns().has(col)" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              {{ columnLabel(col) }}
+            </button>
           </div>
         </div>
 
-        @if (selectedColumnsOrdered().length) {
+        <ng-container *ngIf="selectedColumnsOrdered().length; else noColumnsSelectedBlock">
           <div class="es-table-wrap">
             <table class="es-flat-table">
               <thead>
                 <tr>
-                  @for (col of selectedColumnsOrdered(); track col) {
-                    <th>{{ columnLabel(col) }}</th>
-                  }
+                  <th *ngFor="let col of selectedColumnsOrdered(); trackBy: trackByValue">{{ columnLabel(col) }}</th>
                 </tr>
               </thead>
               <tbody>
-                @for (row of tableRows(); track row.id) {
-                  <tr>
-                    @for (col of selectedColumnsOrdered(); track col) {
-                      <td>{{ row.flat[col] }}</td>
-                    }
-                  </tr>
-                }
+                <tr *ngFor="let row of tableRows(); trackBy: trackById">
+                  <td *ngFor="let col of selectedColumnsOrdered(); trackBy: trackByValue">{{ row.flat[col] }}</td>
+                </tr>
               </tbody>
             </table>
           </div>
-        } @else {
+        </ng-container>
+        <ng-template #noColumnsSelectedBlock>
           <p class="es-empty">No columns selected — check at least one above.</p>
-        }
-      }
-    } @else {
-    <div class="es-timeline">
-      @for (ev of pagedEvents(); track ev.id) {
-        <div class="es-event" [class.es-event--expanded]="expanded().has(ev.id)">
+        </ng-template>
+      </ng-template>
+    </ng-container>
+    <ng-template #timelineViewBlock>
+      <div class="es-timeline">
+        <div class="es-event" *ngFor="let ev of pagedEvents(); trackBy: trackById" [class.es-event--expanded]="expanded().has(ev.id)">
 
           <div class="es-event-header" (click)="toggleExpand(ev.id)">
             <div class="es-event-number">#{{ ev.number }}</div>
@@ -420,135 +375,127 @@
               <span class="es-event-time">{{ ev.data.createdAt | date:'MMM d, y · HH:mm:ss' }}</span>
             </div>
             <div class="es-event-right">
-              @if (ev.data.userContext?.name) {
-                <span class="es-event-user">{{ ev.data.userContext!.name }}</span>
-              }
+              <span class="es-event-user" *ngIf="ev.data.userContext?.name">{{ ev.data.userContext!.name }}</span>
               <span class="es-expand-icon">{{ expanded().has(ev.id) ? '▲' : '▼' }}</span>
             </div>
           </div>
 
-          @if (expanded().has(ev.id)) {
-            <div class="es-event-body">
-              <div class="es-meta-grid">
-                <div class="es-meta-item">
-                  <span class="es-meta-key">Event ID</span>
-                  <code class="es-meta-val es-copyable" (click)="copy(ev.id)" title="Copy">{{ ev.id }}</code>
-                </div>
-                <div class="es-meta-item">
-                  <span class="es-meta-key">Command ID</span>
-                  <code class="es-meta-val es-copyable" (click)="copy(ev.data.commandId)" title="Copy">{{ ev.data.commandId }}</code>
-                </div>
-                <div class="es-meta-item">
-                  <span class="es-meta-key">Created By</span>
-                  <code class="es-meta-val">{{ ev.data.createdBy }}</code>
-                </div>
-                <div class="es-meta-item">
-                  <span class="es-meta-key">Tenant</span>
-                  <code class="es-meta-val">{{ ev.data.tenantId }}</code>
-                </div>
-                @if (ev.data.userContext) {
-                  <div class="es-meta-item">
-                    <span class="es-meta-key">User</span>
-                    <code class="es-meta-val">{{ ev.data.userContext.name }} ({{ ev.data.userContext.id }})</code>
-                  </div>
-                  <div class="es-meta-item">
-                    <span class="es-meta-key">Request ID</span>
-                    <code class="es-meta-val es-copyable" (click)="copy(ev.data.userContext.requestId)" title="Copy">{{ ev.data.userContext.requestId }}</code>
-                  </div>
-                }
+          <div class="es-event-body" *ngIf="expanded().has(ev.id)">
+            <div class="es-meta-grid">
+              <div class="es-meta-item">
+                <span class="es-meta-key">Event ID</span>
+                <code class="es-meta-val es-copyable" (click)="copy(ev.id)" title="Copy">{{ ev.id }}</code>
               </div>
-              <div class="es-payload-wrap">
-                <div class="es-payload-header">
-                  <span class="es-payload-label">Payload</span>
-                  <div class="es-payload-actions">
-                    @if (editingEventNumber() !== ev.number) {
-                      <button class="es-edit-payload-btn" (click)="startEdit(ev.number)" title="Edit payload">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                        </svg>
-                        Edit
-                      </button>
-                    }
-                    <button class="es-copy-payload-btn" (click)="copyPayload(ev)">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                      </svg>
-                      Copy JSON
+              <div class="es-meta-item">
+                <span class="es-meta-key">Command ID</span>
+                <code class="es-meta-val es-copyable" (click)="copy(ev.data.commandId)" title="Copy">{{ ev.data.commandId }}</code>
+              </div>
+              <div class="es-meta-item">
+                <span class="es-meta-key">Created By</span>
+                <code class="es-meta-val">{{ ev.data.createdBy }}</code>
+              </div>
+              <div class="es-meta-item">
+                <span class="es-meta-key">Tenant</span>
+                <code class="es-meta-val">{{ ev.data.tenantId }}</code>
+              </div>
+              <ng-container *ngIf="ev.data.userContext">
+                <div class="es-meta-item">
+                  <span class="es-meta-key">User</span>
+                  <code class="es-meta-val">{{ ev.data.userContext.name }} ({{ ev.data.userContext.id }})</code>
+                </div>
+                <div class="es-meta-item">
+                  <span class="es-meta-key">Request ID</span>
+                  <code class="es-meta-val es-copyable" (click)="copy(ev.data.userContext.requestId)" title="Copy">{{ ev.data.userContext.requestId }}</code>
+                </div>
+              </ng-container>
+            </div>
+            <div class="es-payload-wrap">
+              <div class="es-payload-header">
+                <span class="es-payload-label">Payload</span>
+                <div class="es-payload-actions">
+                  <button class="es-edit-payload-btn" *ngIf="editingEventNumber() !== ev.number" (click)="startEdit(ev.number)" title="Edit payload">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                    Edit
+                  </button>
+                  <button class="es-copy-payload-btn" (click)="copyPayload(ev)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    </svg>
+                    Copy JSON
+                  </button>
+                </div>
+              </div>
+              <ng-container *ngIf="editingEventNumber() === ev.number; else payloadViewBlock">
+                <div class="es-payload-edit">
+                  <textarea
+                    class="es-payload-textarea"
+                    [ngModel]="editingPayload()"
+                    (ngModelChange)="editingPayload.set($event)"
+                    placeholder="Edit JSON payload..."
+                    rows="12"></textarea>
+                  <div class="es-edit-actions">
+                    <button class="es-edit-btn es-edit-btn--cancel" (click)="cancelEdit()" [disabled]="saving()">
+                      Cancel
+                    </button>
+                    <button class="es-edit-btn es-edit-btn--save" (click)="saveEdit()" [disabled]="saving()">
+                      <ng-container *ngIf="saving(); else saveLabelBlock">
+                        <span class="es-saving-spinner">Saving...</span>
+                      </ng-container>
+                      <ng-template #saveLabelBlock>Save Changes</ng-template>
                     </button>
                   </div>
                 </div>
-                @if (editingEventNumber() === ev.number) {
-                  <div class="es-payload-edit">
-                    <textarea 
-                      class="es-payload-textarea"
-                      [ngModel]="editingPayload()"
-                      (ngModelChange)="editingPayload.set($event)"
-                      placeholder="Edit JSON payload..."
-                      rows="12"></textarea>
-                    <div class="es-edit-actions">
-                      <button class="es-edit-btn es-edit-btn--cancel" (click)="cancelEdit()" [disabled]="saving()">
-                        Cancel
-                      </button>
-                      <button class="es-edit-btn es-edit-btn--save" (click)="saveEdit()" [disabled]="saving()">
-                        @if (saving()) {
-                          <span class="es-saving-spinner">Saving...</span>
-                        } @else {
-                          Save Changes
-                        }
-                      </button>
-                    </div>
-                  </div>
-                } @else {
-                  <pre class="es-payload">{{ ev.data.payload | json }}</pre>
-                }
-              </div>
+              </ng-container>
+              <ng-template #payloadViewBlock>
+                <pre class="es-payload">{{ ev.data.payload | json }}</pre>
+              </ng-template>
             </div>
-          }
+          </div>
         </div>
-      }
-    </div>
-    }
+      </div>
+    </ng-template>
 
     <!-- ── Pagination ── -->
-    @if (totalPages() > 1) {
-      <div class="es-pagination">
-        <button class="es-page-btn es-page-nav"
-          [disabled]="currentPage() === 1"
-          (click)="prevPage()" title="Previous">
-          ‹
-        </button>
+    <div class="es-pagination" *ngIf="totalPages() > 1">
+      <button class="es-page-btn es-page-nav"
+        [disabled]="currentPage() === 1"
+        (click)="prevPage()" title="Previous">
+        ‹
+      </button>
 
-        @for (p of pageNumbers(); track $index) {
-          @if (p === '…') {
-            <span class="es-page-ellipsis">…</span>
-          } @else {
-            <button class="es-page-btn"
-              [class.active]="p === currentPage()"
-              (click)="goToPage(p)">
-              {{ p }}
-            </button>
-          }
-        }
+      <ng-container *ngFor="let p of pageNumbers(); trackBy: trackByIndex">
+        <span class="es-page-ellipsis" *ngIf="p === '…'; else pageBtnBlock">…</span>
+        <ng-template #pageBtnBlock>
+          <button class="es-page-btn"
+            [class.active]="p === currentPage()"
+            (click)="goToPage(p)">
+            {{ p }}
+          </button>
+        </ng-template>
+      </ng-container>
 
-        <button class="es-page-btn es-page-nav"
-          [disabled]="currentPage() === totalPages()"
-          (click)="nextPage()" title="Next">
-          ›
-        </button>
+      <button class="es-page-btn es-page-nav"
+        [disabled]="currentPage() === totalPages()"
+        (click)="nextPage()" title="Next">
+        ›
+      </button>
 
-        <span class="es-page-info">
-          Page {{ currentPage() }} of {{ totalPages() }}
-          · {{ filteredEvents().length }} event{{ filteredEvents().length !== 1 ? 's' : '' }}
-        </span>
-      </div>
-    }
+      <span class="es-page-info">
+        Page {{ currentPage() }} of {{ totalPages() }}
+        · {{ filteredEvents().length }} event{{ filteredEvents().length !== 1 ? 's' : '' }}
+      </span>
+    </div>
 
-  } @else if (viewMode() !== 'aggregation' && events().length && !filteredEvents().length) {
-    <p class="es-empty">No events match your filter.</p>
-  } @else if (viewMode() !== 'aggregation' && !loading() && searched()) {
-    <p class="es-empty">No events found for this stream.</p>
-  }
+  </ng-container>
+  <ng-template #noEventsOrFilterBlock>
+    <p class="es-empty" *ngIf="viewMode() !== 'aggregation' && events().length && !filteredEvents().length; else noEventsFoundBlock">No events match your filter.</p>
+    <ng-template #noEventsFoundBlock>
+      <p class="es-empty" *ngIf="viewMode() !== 'aggregation' && !loading() && searched()">No events found for this stream.</p>
+    </ng-template>
+  </ng-template>
 
 </div>

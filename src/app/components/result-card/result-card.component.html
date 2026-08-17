@@ -1,18 +1,18 @@
 <div class="result-card">
   <div class="result-card-header">
     <div class="result-card-meta">
-      @if (record.de) { <span class="result-de">{{ record.de }}</span> }
+      <ng-container *ngIf="record.de"> <span class="result-de">{{ record.de }}</span> </ng-container>
       <span class="status-badge" [ngClass]="record.status">{{ record.status }}</span>
-      @if (!isActivation) {
+      <ng-container *ngIf="!isActivation">
         <span class="type-badge" [ngClass]="record.unReport ? 'unreport' : 'report'">
           {{ record.unReport ? 'Un-Reported' : 'Reported' }}
         </span>
-      }
-      @if (isActivation) {
+      </ng-container>
+      <ng-container *ngIf="isActivation">
         <span class="type-badge" [ngClass]="record.activation === 'true' ? 'report' : 'unreport'">
           {{ record.activation === 'true' ? 'Activation' : 'Deactivation' }}
         </span>
-      }
+      </ng-container>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
       <span class="result-date">{{ record.createdAt | date:'medium' }}</span>
@@ -26,18 +26,18 @@
   <div class="result-cases-grid">
     <div class="case-list case-list--success">
       <p class="case-list-title">Success <span class="case-count">{{ record.successCases ? record.successCases.length : 0 }}</span></p>
-      @if (!record.successCases || !record.successCases.length) { <p class="case-empty">None</p> }
-      @else { <ul>@for (c of record.successCases; track c) { <li>{{ c }}</li> }</ul> }
+      <ng-container *ngIf="!record.successCases || !record.successCases.length; else elseBlock1"> <p class="case-empty">None</p> </ng-container>
+      <ng-template #elseBlock1> <ul><ng-container *ngFor="let c of record.successCases; trackBy: trackByValue"> <li>{{ c }}</li> </ng-container></ul> </ng-template>
     </div>
     <div class="case-list case-list--warning">
       <p class="case-list-title">Skipped <span class="case-count">{{ record.skippedCases ? record.skippedCases.length : 0 }}</span></p>
-      @if (!record.skippedCases || !record.skippedCases.length) { <p class="case-empty">None</p> }
-      @else { <ul>@for (s of record.skippedCases; track s.caseId) { <li>{{ s.caseId }} — {{ s.reason }}</li> }</ul> }
+      <ng-container *ngIf="!record.skippedCases || !record.skippedCases.length; else elseBlock2"> <p class="case-empty">None</p> </ng-container>
+      <ng-template #elseBlock2> <ul><ng-container *ngFor="let s of record.skippedCases; trackBy: trackByCaseId"> <li>{{ s.caseId }} — {{ s.reason }}</li> </ng-container></ul> </ng-template>
     </div>
     <div class="case-list case-list--error">
       <p class="case-list-title">Errors <span class="case-count">{{ record.errorCases ? record.errorCases.length : 0 }}</span></p>
-      @if (!record.errorCases || !record.errorCases.length) { <p class="case-empty">None</p> }
-      @else { <ul>@for (c of record.errorCases; track c) { <li>{{ c }}</li> }</ul> }
+      <ng-container *ngIf="!record.errorCases || !record.errorCases.length; else elseBlock3"> <p class="case-empty">None</p> </ng-container>
+      <ng-template #elseBlock3> <ul><ng-container *ngFor="let c of record.errorCases; trackBy: trackByValue"> <li>{{ c }}</li> </ng-container></ul> </ng-template>
     </div>
   </div>
 </div>

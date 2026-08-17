@@ -5,6 +5,7 @@ import {
   SplunkAnalyzeService,
   SplunkLogAnalysisResponse,
   SplunkAnalyzeParams,
+  LogAnalysisSuggestion,
 } from '../../services/splunk-analyze.service';
 import { SnackbarService } from '../../services/snackbar.service';
 import { ThemeService } from '../../services/theme.service';
@@ -51,6 +52,18 @@ export class SplunkAnalyzeComponent {
   // ── Options
   logLevels = LOG_LEVELS;
   models = ['claude-haiku-4-5', 'claude-sonnet-4-20250514', 'claude-opus-4-20250514'];
+
+  trackByLevel(index: number, level: string): string {
+    return level;
+  }
+
+  trackByModel(index: number, m: string): string {
+    return m;
+  }
+
+  trackByTitle(index: number, s: LogAnalysisSuggestion): string {
+    return s.title;
+  }
 
   toggleLevel(level: string): void {
     this.selectedLevels.update(levels => {

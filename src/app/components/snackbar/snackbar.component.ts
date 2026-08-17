@@ -8,14 +8,12 @@ import { SnackbarService, SnackbarMessage } from '../../services/snackbar.servic
   imports: [CommonModule],
   template: `
     <div class="snackbar-container" aria-live="polite" aria-atomic="false">
-      @for (snack of snackbar.snacks(); track snack.id) {
-        <div class="snack" [class]="'snack--' + snack.type" role="alert">
-          <span class="snack-icon">{{ icons[snack.type] }}</span>
-          <span class="snack-message">{{ snack.message }}</span>
-          <button class="snack-close" (click)="snackbar.dismiss(snack.id)" aria-label="Dismiss">✕</button>
-          <div class="snack-progress"></div>
-        </div>
-      }
+      <div class="snack" *ngFor="let snack of snackbar.snacks(); trackBy: trackById" [class]="'snack--' + snack.type" role="alert">
+        <span class="snack-icon">{{ icons[snack.type] }}</span>
+        <span class="snack-message">{{ snack.message }}</span>
+        <button class="snack-close" (click)="snackbar.dismiss(snack.id)" aria-label="Dismiss">✕</button>
+        <div class="snack-progress"></div>
+      </div>
     </div>
   `,
   styleUrls: ['./snackbar.component.css'],
@@ -29,4 +27,8 @@ export class SnackbarComponent {
   };
 
   constructor(public snackbar: SnackbarService) {}
+
+  trackById(index: number, snack: SnackbarMessage): number {
+    return snack.id;
+  }
 }
