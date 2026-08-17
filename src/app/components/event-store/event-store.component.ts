@@ -14,7 +14,6 @@ import { CaseContextService } from '../../services/case-context.service';
 import { CaseAggregationResultsService } from '../../services/case-aggregation-results.service';
 import { flattenObject } from '../../utils/flatten';
 import { DbAggregationComponent } from '../db-aggregation/db-aggregation.component';
-import { isLocalHost } from '../../utils/env';
 
 const PAGE_SIZE = 10;
 const TABLE_PAGE_SIZE = 20;
@@ -53,9 +52,6 @@ export class EventStoreComponent {
   private exportSvc = inject(StreamExportService);
   private caseContext = inject(CaseContextService);
   private caseAggResults = inject(CaseAggregationResultsService);
-
-  /** Hides the DB Aggregation option on the deployed Vercel site — it needs the local companion server.js. */
-  readonly showDbAggregation = isLocalHost();
 
   // ── Editable form state (env + tenant come from JWT only)
   aggregatePreset = signal<AggregateType | typeof CUSTOM_AGGREGATE>('fundAccount');
