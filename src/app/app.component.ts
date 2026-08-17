@@ -19,6 +19,7 @@ import { EventStoreComponent } from './components/event-store/event-store.compon
 import { SplunkAnalyzeComponent } from './components/splunk-analyze/splunk-analyze.component';
 import { GitBranchManagerComponent } from './components/git-branch-manager/git-branch-manager.component';
 import { DbAggregationComponent } from './components/db-aggregation/db-aggregation.component';
+import { isLocalHost } from './utils/env';
 
 type ActiveTool = 'report911' | 'recordCopy' | 'eventStore' | 'splunkAnalyze' | 'gitBranchManager' | 'dbAggregation';
 
@@ -67,7 +68,8 @@ export class AppComponent {
   toolMenuOpen = signal(false);
   toolLabels = TOOL_LABELS;
   toolIcons  = TOOL_ICONS;
-  toolKeys = Object.keys(TOOL_LABELS) as ActiveTool[];
+  toolKeys = (Object.keys(TOOL_LABELS) as ActiveTool[])
+    .filter(key => key !== 'dbAggregation' || isLocalHost());
 
   submitted911 = signal<CommandResult[] | null>(null);
   postResults911 = signal<ResultRecord[]>([]);

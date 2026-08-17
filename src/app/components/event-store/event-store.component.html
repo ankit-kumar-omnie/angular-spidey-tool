@@ -276,12 +276,14 @@
     <div class="es-seg-group es-seg-group--wrap">
       <button type="button" class="es-seg-btn" [class.active]="viewMode() === 'timeline'" (click)="setViewMode('timeline')">Timeline</button>
       <button type="button" class="es-seg-btn" [class.active]="viewMode() === 'table'" (click)="setViewMode('table')">Table (Custom Columns)</button>
-      <button type="button" class="es-seg-btn" [class.active]="viewMode() === 'aggregation'" (click)="setViewMode('aggregation')">DB Aggregation</button>
+      @if (showDbAggregation) {
+        <button type="button" class="es-seg-btn" [class.active]="viewMode() === 'aggregation'" (click)="setViewMode('aggregation')">DB Aggregation</button>
+      }
     </div>
   }
 
-  <!-- ── DB Aggregation, on the case IDs from this fetch ── -->
-  @if (viewMode() === 'aggregation' && events().length) {
+  <!-- ── DB Aggregation, on the case IDs from this fetch — local dev only, needs server.js ── -->
+  @if (showDbAggregation && viewMode() === 'aggregation' && events().length) {
     <app-db-aggregation />
   }
 
