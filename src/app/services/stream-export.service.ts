@@ -54,11 +54,12 @@ export class StreamExportService {
     };
   }
 
-  /** Builds a single-tab workbook from the flattened rows and triggers a browser download. */
-  exportToExcel(rows: StreamExportRow[], streamId: string): void {
+  /** Builds a single-tab workbook from the flattened rows and triggers a browser download. `extraColumns` appends fields beyond the fixed Rollback shape, e.g. joined case-aggregation data. */
+  exportToExcel(rows: Record<string, unknown>[], streamId: string, extraColumns: { key: string; header: string }[] = []): void {
+    const columns = [...EXPORT_COLUMNS, ...extraColumns];
     const aoa = [
-      EXPORT_COLUMNS.map(col => col.header),
-      ...rows.map(row => EXPORT_COLUMNS.map(col => row[col.key] ?? '')),
+      columns.map(col => col.header),
+      ...rows.map(row => columns.map(col => row[col.key] ?? '')),
     ];
     const worksheet = XLSX.utils.aoa_to_sheet(aoa);
     const workbook = XLSX.utils.book_new();

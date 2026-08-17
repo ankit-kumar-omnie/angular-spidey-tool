@@ -275,12 +275,20 @@
   @if (events().length) {
     <div class="es-seg-group es-seg-group--wrap">
       <button type="button" class="es-seg-btn" [class.active]="viewMode() === 'timeline'" (click)="setViewMode('timeline')">Timeline</button>
-      <button type="button" class="es-seg-btn" [class.active]="viewMode() === 'table'" (click)="setViewMode('table')">Table (Rollback Info)</button>
+      <button type="button" class="es-seg-btn" [class.active]="viewMode() === 'table'" (click)="setViewMode('table')">Table (Custom Columns)</button>
+      @if (showDbAggregation) {
+        <button type="button" class="es-seg-btn" [class.active]="viewMode() === 'aggregation'" (click)="setViewMode('aggregation')">DB Aggregation</button>
+      }
     </div>
   }
 
+  <!-- ── DB Aggregation, on the case IDs from this fetch — local dev only, needs server.js ── -->
+  @if (showDbAggregation && viewMode() === 'aggregation' && events().length) {
+    <app-db-aggregation />
+  }
+
   <!-- ── Event timeline ── -->
-  @if (pagedEvents().length) {
+  @if (viewMode() !== 'aggregation' && pagedEvents().length) {
 
     <!-- Sort bar -->
     <div class="es-sort-bar">
@@ -322,32 +330,85 @@
     </div>
 
     @if (viewMode() === 'table') {
-      <div class="es-table-wrap">
-        <table class="es-flat-table">
-          <thead>
-            <tr>
-              <th>Aggregate ID</th>
-              <th>Rollback From</th>
-              <th>Status Date</th>
-              <th>Rollback To</th>
-              <th>Created At</th>
-              <th>User</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (row of tableRows(); track row.id) {
+      @if (isRollbackStream()) {
+        <div class="es-table-wrap">
+          <table class="es-flat-table">
+            <thead>
               <tr>
-                <td class="es-mono">{{ row.aggregateId }}</td>
-                <td>{{ row.currentStatus }}</td>
-                <td>{{ row.statusDate }}</td>
-                <td>{{ row.targetStatus }}</td>
-                <td>{{ row.createdAt }}</td>
-                <td>{{ row.userName }}</td>
+                <th>Aggregate ID</th>
+                <th>Rollback From</th>
+                <th>Status Date</th>
+                <th>Rollback To</th>
+                <th>Created At</th>
+                <th>User</th>
+                @for (col of caseColumns(); track col) {
+                  <th>{{ col }}</th>
+                }
               </tr>
+            </thead>
+            <tbody>
+              @for (row of rollbackRows(); track row.id) {
+                <tr>
+                  <td class="es-mono">{{ row.aggregateId }}</td>
+                  <td>{{ row.currentStatus }}</td>
+                  <td>{{ row.statusDate }}</td>
+                  <td>{{ row.targetStatus }}</td>
+                  <td>{{ row.createdAt }}</td>
+                  <td>{{ row.userName }}</td>
+                  @for (col of caseColumns(); track col) {
+                    <td>{{ row.caseFlat[col] }}</td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <div class="es-column-picker">
+          <div class="es-column-picker-header">
+            <span class="es-column-picker-label">Columns ({{ selectedColumnsOrdered().length }} / {{ allColumns().length }})</span>
+            <button type="button" class="es-column-picker-action" (click)="selectAllColumns()">Select All</button>
+            <button type="button" class="es-column-picker-action" (click)="clearAllColumns()">Clear</button>
+          </div>
+          <div class="es-column-picker-list">
+            @for (col of allColumns(); track col) {
+              <button type="button" class="es-column-chip" [class.active]="selectedColumns().has(col)" (click)="toggleColumn(col)">
+                @if (selectedColumns().has(col)) {
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                }
+                {{ columnLabel(col) }}
+              </button>
             }
-          </tbody>
-        </table>
-      </div>
+          </div>
+        </div>
+
+        @if (selectedColumnsOrdered().length) {
+          <div class="es-table-wrap">
+            <table class="es-flat-table">
+              <thead>
+                <tr>
+                  @for (col of selectedColumnsOrdered(); track col) {
+                    <th>{{ columnLabel(col) }}</th>
+                  }
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of tableRows(); track row.id) {
+                  <tr>
+                    @for (col of selectedColumnsOrdered(); track col) {
+                      <td>{{ row.flat[col] }}</td>
+                    }
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <p class="es-empty">No columns selected — check at least one above.</p>
+        }
+      }
     } @else {
     <div class="es-timeline">
       @for (ev of pagedEvents(); track ev.id) {
@@ -486,9 +547,9 @@
       </div>
     }
 
-  } @else if (events().length && !filteredEvents().length) {
+  } @else if (viewMode() !== 'aggregation' && events().length && !filteredEvents().length) {
     <p class="es-empty">No events match your filter.</p>
-  } @else if (!loading() && searched()) {
+  } @else if (viewMode() !== 'aggregation' && !loading() && searched()) {
     <p class="es-empty">No events found for this stream.</p>
   }
 

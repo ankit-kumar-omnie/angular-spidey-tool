@@ -10,6 +10,11 @@ import { SnackbarService } from '../../services/snackbar.service';
 import { ThemeService } from '../../services/theme.service';
 import { AuthService } from '../../services/auth.service';
 import { StreamExportService } from '../../services/stream-export.service';
+import { CaseContextService } from '../../services/case-context.service';
+import { CaseAggregationResultsService } from '../../services/case-aggregation-results.service';
+import { flattenObject } from '../../utils/flatten';
+import { DbAggregationComponent } from '../db-aggregation/db-aggregation.component';
+import { isLocalHost } from '../../utils/env';
 
 const PAGE_SIZE = 10;
 const TABLE_PAGE_SIZE = 20;
@@ -36,7 +41,7 @@ const JWT_ENV_LABELS: Record<string, string> = {
 @Component({
   selector: 'app-event-store',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatePipe, JsonPipe],
+  imports: [CommonModule, FormsModule, DatePipe, JsonPipe, DbAggregationComponent],
   templateUrl: './event-store.component.html',
   styleUrls: ['./event-store.component.css'],
 })
@@ -46,6 +51,11 @@ export class EventStoreComponent {
   readonly theme    = inject(ThemeService);
   private auth      = inject(AuthService);
   private exportSvc = inject(StreamExportService);
+  private caseContext = inject(CaseContextService);
+  private caseAggResults = inject(CaseAggregationResultsService);
+
+  /** Hides the DB Aggregation option on the deployed Vercel site — it needs the local companion server.js. */
+  readonly showDbAggregation = isLocalHost();
 
   // ── Editable form state (env + tenant come from JWT only)
   aggregatePreset = signal<AggregateType | typeof CUSTOM_AGGREGATE>('fundAccount');
@@ -99,7 +109,8 @@ export class EventStoreComponent {
   error      = signal<string | null>(null);
   events     = signal<EventRecord[]>([]);
   expanded   = signal<Set<string>>(new Set());
-  viewMode   = signal<'timeline' | 'table'>('timeline');
+  viewMode   = signal<'timeline' | 'table' | 'aggregation'>('timeline');
+  selectedColumns = signal<Set<string>>(new Set());
   filterText     = signal('');
   filterType     = signal('');
   filterDateFrom = signal('');
@@ -226,9 +237,68 @@ export class EventStoreComponent {
     return this.filteredEvents().slice(start, start + size);
   });
 
-  /** Flattened Aggregate ID / Rollback From / Rollback To view — same fields as the Excel export, for the current page only. */
+  /** case_status_rolled_back keeps its original fixed Rollback From/To table — no column picker. */
+  isRollbackStream = computed(() => this.effectiveStreamId().includes('case_status_rolled_back'));
+
+  /** The case doc for an event's aggregateId, if a DB Aggregation run has one — joined by `id`. */
+  private caseDocFor(aggregateId: string): Record<string, unknown> | undefined {
+    return this.caseAggResults.resultsById()[aggregateId];
+  }
+
+  /** Every field present across all joined case docs (flattened, excluding the `id` join key), stable regardless of pagination. */
+  caseColumns = computed<string[]>(() => {
+    const seen = new Set<string>();
+    const ordered: string[] = [];
+    for (const ev of this.events()) {
+      const caseDoc = this.caseDocFor(ev.data.aggregateId);
+      if (!caseDoc) continue;
+      for (const key of Object.keys(flattenObject(caseDoc))) {
+        if (key === 'id' || seen.has(key)) continue;
+        seen.add(key);
+        ordered.push(key);
+      }
+    }
+    return ordered;
+  });
+
+  /** Flattened Aggregate ID / Rollback From / Rollback To view for case_status_rolled_back, plus every joined case field, current page only. */
+  rollbackRows = computed(() =>
+    this.pagedEvents().map(ev => {
+      const base = { id: ev.id, ...this.exportSvc.parseEvent(ev) };
+      const caseDoc = this.caseDocFor(base.aggregateId);
+      return { ...base, caseFlat: caseDoc ? flattenObject(caseDoc) : {} };
+    })
+  );
+
+  /** Flattens an event, merging in its joined case doc (if any) under a `case.` prefix. */
+  private flattenEventWithCase(ev: EventRecord): Record<string, unknown> {
+    const flat = flattenObject(ev);
+    const caseDoc = this.caseDocFor(ev.data.aggregateId);
+    if (caseDoc) Object.assign(flat, flattenObject(caseDoc, 'case'));
+    return flat;
+  }
+
+  /** Every dot-path field discovered across all fetched events (plus joined case fields), in first-seen order — the checkbox list for Table view. */
+  allColumns = computed<string[]>(() => {
+    const seen = new Set<string>();
+    const ordered: string[] = [];
+    for (const ev of this.events()) {
+      for (const key of Object.keys(this.flattenEventWithCase(ev))) {
+        if (!seen.has(key)) { seen.add(key); ordered.push(key); }
+      }
+    }
+    return ordered;
+  });
+
+  /** Only the checked columns, in discovery order. */
+  selectedColumnsOrdered = computed(() => {
+    const selected = this.selectedColumns();
+    return this.allColumns().filter(col => selected.has(col));
+  });
+
+  /** Flattened field values for the current page (event fields + joined case fields) — table view renders `row.flat[col]` for each selected column. */
   tableRows = computed(() =>
-    this.pagedEvents().map(ev => ({ id: ev.id, ...this.exportSvc.parseEvent(ev) }))
+    this.pagedEvents().map(ev => ({ id: ev.id, flat: this.flattenEventWithCase(ev) }))
   );
 
   pageNumbers = computed(() => {
@@ -296,7 +366,10 @@ export class EventStoreComponent {
 
     this.svc.getEvents(this.effectiveStreamId()).subscribe({
       next: data => {
-        this.events.set(Array.isArray(data) ? data : []);
+        const events = Array.isArray(data) ? data : [];
+        this.events.set(events);
+        this.selectedColumns.set(new Set(this.allColumns()));
+        this.caseContext.setIds(events.map(ev => ev.data.aggregateId), this.effectiveStreamId());
         this.loading.set(false);
         this.searched.set(true);
         if (data.length === 0) {
@@ -324,9 +397,25 @@ export class EventStoreComponent {
 
   onFilterChange(): void { this.currentPage.set(1); }
 
-  setViewMode(mode: 'timeline' | 'table'): void {
+  setViewMode(mode: 'timeline' | 'table' | 'aggregation'): void {
     this.viewMode.set(mode);
     this.currentPage.set(1);
+  }
+
+  toggleColumn(col: string): void {
+    this.selectedColumns.update(set => {
+      const next = new Set(set);
+      next.has(col) ? next.delete(col) : next.add(col);
+      return next;
+    });
+  }
+
+  selectAllColumns(): void { this.selectedColumns.set(new Set(this.allColumns())); }
+  clearAllColumns(): void { this.selectedColumns.set(new Set()); }
+
+  /** Drops the redundant "data." prefix shared by nearly every column, for a cleaner header/checkbox label. */
+  columnLabel(col: string): string {
+    return col.replace(/^data\./, '');
   }
 
   setSort(field: 'number' | 'type' | 'date'): void {
@@ -391,9 +480,12 @@ export class EventStoreComponent {
       .then(() => this.snackbar.success('Payload copied as JSON.'));
   }
 
-  // ── Export — all filtered events as JSON file
+  // ── Export — all filtered events as JSON file, with any joined case doc attached
   exportJson(): void {
-    const data   = this.filteredEvents();
+    const data   = this.filteredEvents().map(ev => ({
+      ...ev,
+      caseData: this.caseDocFor(ev.data.aggregateId) ?? null,
+    }));
     const blob   = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url    = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
@@ -406,15 +498,22 @@ export class EventStoreComponent {
     this.snackbar.success(`Exported ${data.length} events as ${name}`);
   }
 
-  // ── Export — all filtered events as Excel (.xlsx), flattened to Rollback From/To columns
+  // ── Export — all filtered events as Excel (.xlsx), flattened to Rollback From/To columns plus every joined case field
   exportExcel(): void {
     const events = this.filteredEvents();
     if (!events.length) {
       this.snackbar.error('Nothing to export — fetch events first.');
       return;
     }
-    const rows = events.map(ev => this.exportSvc.parseEvent(ev));
-    this.exportSvc.exportToExcel(rows, this.effectiveStreamId());
+    const caseCols = this.caseColumns();
+    const rows = events.map(ev => {
+      const row: Record<string, unknown> = { ...this.exportSvc.parseEvent(ev) };
+      const caseFlat = flattenObject(this.caseDocFor(ev.data.aggregateId) ?? {});
+      for (const col of caseCols) row[col] = caseFlat[col] ?? '';
+      return row;
+    });
+    const extraColumns = caseCols.map(col => ({ key: col, header: col }));
+    this.exportSvc.exportToExcel(rows, this.effectiveStreamId(), extraColumns);
     this.snackbar.success(`Exported ${rows.length} row${rows.length !== 1 ? 's' : ''} to Excel.`);
   }
 

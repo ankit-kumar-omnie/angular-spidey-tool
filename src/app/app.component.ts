@@ -18,8 +18,10 @@ import { SnackbarComponent } from './components/snackbar/snackbar.component';
 import { EventStoreComponent } from './components/event-store/event-store.component';
 import { SplunkAnalyzeComponent } from './components/splunk-analyze/splunk-analyze.component';
 import { GitBranchManagerComponent } from './components/git-branch-manager/git-branch-manager.component';
+import { DbAggregationComponent } from './components/db-aggregation/db-aggregation.component';
+import { isLocalHost } from './utils/env';
 
-type ActiveTool = 'report911' | 'recordCopy' | 'eventStore' | 'splunkAnalyze' | 'gitBranchManager';
+type ActiveTool = 'report911' | 'recordCopy' | 'eventStore' | 'splunkAnalyze' | 'gitBranchManager' | 'dbAggregation';
 
 const TOOL_LABELS: Record<ActiveTool, string> = {
   report911:        'Report 911 SPIDEY Tool',
@@ -27,6 +29,7 @@ const TOOL_LABELS: Record<ActiveTool, string> = {
   eventStore:       'Event Store Viewer',
   splunkAnalyze:    'Splunk Log Analyzer',
   gitBranchManager: 'Git Branch Manager',
+  dbAggregation:    'DB Aggregation',
 };
 
 const TOOL_ICONS: Record<ActiveTool, string> = {
@@ -35,6 +38,7 @@ const TOOL_ICONS: Record<ActiveTool, string> = {
   eventStore:       '⚡',
   splunkAnalyze:    '🔍',
   gitBranchManager: '🌿',
+  dbAggregation:    '🗄️',
 };
 
 @Component({
@@ -54,6 +58,7 @@ const TOOL_ICONS: Record<ActiveTool, string> = {
     EventStoreComponent,
     SplunkAnalyzeComponent,
     GitBranchManagerComponent,
+    DbAggregationComponent,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
@@ -63,7 +68,8 @@ export class AppComponent {
   toolMenuOpen = signal(false);
   toolLabels = TOOL_LABELS;
   toolIcons  = TOOL_ICONS;
-  toolKeys = Object.keys(TOOL_LABELS) as ActiveTool[];
+  toolKeys = (Object.keys(TOOL_LABELS) as ActiveTool[])
+    .filter(key => key !== 'dbAggregation' || isLocalHost());
 
   submitted911 = signal<CommandResult[] | null>(null);
   postResults911 = signal<ResultRecord[]>([]);

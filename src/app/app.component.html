@@ -191,5 +191,11 @@
     </div>
   }
 
+  @if (activeTool() === "dbAggregation") {
+    <div class="card">
+      <p class="card-title">🗄️ DB Aggregation</p>
+      <app-db-aggregation />
+    </div>
+  }
 
 </div>
