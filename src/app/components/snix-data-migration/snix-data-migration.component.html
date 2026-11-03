@@ -1,0 +1,424 @@
+<div class="snix-container">
+
+  <!-- Upload Section -->
+  <div class="upload-grid">
+
+    <!-- Data 1 -->
+    <section class="upload-card">
+      <h3>Data 1 — Internal Cases</h3>
+
+      <div class="input-mode-buttons">
+        <button
+          type="button"
+          [class.active]="data1InputMode() === 'FILE'"
+          (click)="setData1InputMode('FILE')">
+          Upload File
+        </button>
+
+        <button
+          type="button"
+          [class.active]="data1InputMode() === 'JSON'"
+          (click)="setData1InputMode('JSON')">
+          Paste JSON
+        </button>
+      </div>
+
+      @if (data1InputMode() === 'FILE') {
+        <p>Upload JSON containing id and displayId.</p>
+
+        <input
+          type="file"
+          accept=".json,application/json"
+          (change)="onData1Selected($event)"
+        />
+      } @else {
+        <textarea
+          rows="8"
+          placeholder="Paste Data 1 JSON here..."
+          [value]="data1JsonText()"
+          (input)="data1JsonText.set($any($event.target).value)">
+        </textarea>
+
+        <button type="button" (click)="loadData1FromJson()">
+          Validate Data 1 JSON
+        </button>
+      }
+
+      @if (data1Loaded()) {
+        <p class="success-text">✓ {{ data1FileName() }} loaded</p>
+        <p>{{ data1().length }} records loaded</p>
+      }
+
+      @if (data1Error()) {
+        <p class="error-text">{{ data1Error() }}</p>
+      }
+    </section>
+
+    <!-- Data 2 -->
+    <section class="upload-card">
+      <h3>Data 2 — Participants</h3>
+
+      <div class="input-mode-buttons">
+        <button
+          type="button"
+          [class.active]="data2InputMode() === 'FILE'"
+          (click)="setData2InputMode('FILE')">
+          Upload File
+        </button>
+
+        <button
+          type="button"
+          [class.active]="data2InputMode() === 'JSON'"
+          (click)="setData2InputMode('JSON')">
+          Paste JSON
+        </button>
+      </div>
+
+      @if (data2InputMode() === 'FILE') {
+        <p>Upload JSON containing participantId and caseId.</p>
+
+        <input
+          type="file"
+          accept=".json,application/json"
+          (change)="onData2Selected($event)"
+        />
+      } @else {
+        <textarea
+          rows="8"
+          placeholder="Paste Data 2 JSON here..."
+          [value]="data2JsonText()"
+          (input)="data2JsonText.set($any($event.target).value)">
+        </textarea>
+
+        <button type="button" (click)="loadData2FromJson()">
+          Validate Data 2 JSON
+        </button>
+      }
+
+      @if (data2Loaded()) {
+        <p class="success-text">✓ {{ data2FileName() }} loaded</p>
+        <p>{{ data2().length }} records loaded</p>
+      }
+
+      @if (data2Error()) {
+        <p class="error-text">{{ data2Error() }}</p>
+      }
+    </section>
+
+  </div>
+
+  <!-- Process Button -->
+  <div class="action-row">
+    <button
+      type="button"
+      class="process-button"
+      (click)="processFiles()"
+      [disabled]="!data1Loaded() || !data2Loaded()">
+      Process Data
+    </button>
+  </div>
+
+  <!-- Results -->
+  @if (processingResult(); as result) {
+
+    <section class="results-section">
+
+      <h3>Migration Results</h3>
+
+      <!-- Statistics -->
+      <div class="stats-grid">
+
+        <div class="stat-card">
+          <span>Total Records</span>
+          <strong>{{ result.totalRecords }}</strong>
+        </div>
+
+        <div class="stat-card">
+          <span>Matched</span>
+          <strong>{{ result.matchedRecords }}</strong>
+        </div>
+
+        <div class="stat-card">
+          <span>Unmatched</span>
+          <strong>{{ result.unmatchedRecords }}</strong>
+        </div>
+
+        <div class="stat-card">
+          <span>Matching Rate</span>
+          <strong>{{ result.matchingPercentage }}%</strong>
+        </div>
+
+      </div>
+
+      <!-- Duplicate Detection Report -->
+      <div class="duplicate-section">
+
+        <h3>Duplicate Detection Report</h3>
+
+        <div class="duplicate-grid">
+
+          <!-- Duplicate Display IDs -->
+          <div class="duplicate-card">
+            <h4>Duplicate Display IDs</h4>
+
+            @if (result.duplicateSummary.duplicateDisplayIds.length > 0) {
+
+              @for (
+                item of (showAllDisplayIds()
+                  ? result.duplicateSummary.duplicateDisplayIds
+                  : result.duplicateSummary.duplicateDisplayIds.slice(0, 10));
+                track item.value
+              ) {
+                <div class="duplicate-item">
+                  <span>{{ item.value }}</span>
+                  <strong>{{ item.count }} occurrences</strong>
+                </div>
+              }
+
+              <p class="duplicate-count">
+                Showing
+                {{
+                  showAllDisplayIds()
+                    ? result.duplicateSummary.duplicateDisplayIds.length
+                    : (result.duplicateSummary.duplicateDisplayIds.length > 10
+                        ? 10
+                        : result.duplicateSummary.duplicateDisplayIds.length)
+                }}
+                of {{ result.duplicateSummary.duplicateDisplayIds.length }}
+                duplicates
+              </p>
+
+              @if (result.duplicateSummary.duplicateDisplayIds.length > 10) {
+                <button
+                  type="button"
+                  class="duplicate-toggle"
+                  (click)="toggleDisplayIds()">
+                  {{ showAllDisplayIds() ? 'Show Less' : 'Show More' }}
+                </button>
+              }
+
+            } @else {
+              <p class="no-duplicates">
+                No duplicate Display IDs found.
+              </p>
+            }
+          </div>
+
+          <!-- Duplicate Case IDs -->
+          <div class="duplicate-card">
+            <h4>Duplicate Case IDs</h4>
+
+            @if (result.duplicateSummary.duplicateCaseIds.length > 0) {
+
+              @for (
+                item of (showAllCaseIds()
+                  ? result.duplicateSummary.duplicateCaseIds
+                  : result.duplicateSummary.duplicateCaseIds.slice(0, 10));
+                track item.value
+              ) {
+                <div class="duplicate-item">
+                  <span>{{ item.value }}</span>
+                  <strong>{{ item.count }} occurrences</strong>
+                </div>
+              }
+
+              <p class="duplicate-count">
+                Showing
+                {{
+                  showAllCaseIds()
+                    ? result.duplicateSummary.duplicateCaseIds.length
+                    : (result.duplicateSummary.duplicateCaseIds.length > 10
+                        ? 10
+                        : result.duplicateSummary.duplicateCaseIds.length)
+                }}
+                of {{ result.duplicateSummary.duplicateCaseIds.length }}
+                duplicates
+              </p>
+
+              @if (result.duplicateSummary.duplicateCaseIds.length > 10) {
+                <button
+                  type="button"
+                  class="duplicate-toggle"
+                  (click)="toggleCaseIds()">
+                  {{ showAllCaseIds() ? 'Show Less' : 'Show More' }}
+                </button>
+              }
+
+            } @else {
+              <p class="no-duplicates">
+                No duplicate Case IDs found.
+              </p>
+            }
+          </div>
+
+          <!-- Duplicate Participant IDs -->
+          <div class="duplicate-card">
+            <h4>Duplicate Participant IDs</h4>
+
+            @if (result.duplicateSummary.duplicateParticipantIds.length > 0) {
+
+              @for (
+                item of (showAllParticipantIds()
+                  ? result.duplicateSummary.duplicateParticipantIds
+                  : result.duplicateSummary.duplicateParticipantIds.slice(0, 10));
+                track item.value
+              ) {
+                <div class="duplicate-item">
+                  <span>{{ item.value }}</span>
+                  <strong>{{ item.count }} occurrences</strong>
+                </div>
+              }
+
+              <p class="duplicate-count">
+                Showing
+                {{
+                  showAllParticipantIds()
+                    ? result.duplicateSummary.duplicateParticipantIds.length
+                    : (result.duplicateSummary.duplicateParticipantIds.length > 10
+                        ? 10
+                        : result.duplicateSummary.duplicateParticipantIds.length)
+                }}
+                of {{ result.duplicateSummary.duplicateParticipantIds.length }}
+                duplicates
+              </p>
+
+              @if (result.duplicateSummary.duplicateParticipantIds.length > 10) {
+                <button
+                  type="button"
+                  class="duplicate-toggle"
+                  (click)="toggleParticipantIds()">
+                  {{ showAllParticipantIds() ? 'Show Less' : 'Show More' }}
+                </button>
+              }
+
+            } @else {
+              <p class="no-duplicates">
+                No duplicate Participant IDs found.
+              </p>
+            }
+          </div>
+
+        </div>
+      </div>
+
+      <!-- CSV Export -->
+      <div class="export-row">
+
+        <button type="button" (click)="exportAll()">
+          Export All CSV
+        </button>
+
+        <button type="button" (click)="exportMatched()">
+          Export Matched CSV
+        </button>
+
+        <button type="button" (click)="exportUnmatched()">
+          Export Unmatched CSV
+        </button>
+
+      </div>
+
+      <!-- Search and Filter -->
+      <div class="table-controls">
+
+        <input
+          type="text"
+          placeholder="Search participant or case ID..."
+          [value]="searchTerm()"
+          (input)="onSearchChange($any($event.target).value)"
+        />
+
+        <select
+          [value]="selectedFilter()"
+          (change)="onFilterChange($any($event.target).value)">
+
+          <option value="ALL">All Records</option>
+          <option value="MATCHED">Matched</option>
+          <option value="UNMATCHED">Unmatched</option>
+
+        </select>
+
+      </div>
+
+      <!-- Results Table -->
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Participant ID</th>
+              <th>Original Case ID</th>
+              <th>Converted Case ID</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            @for (record of paginatedRecords(); track $index) {
+
+              <tr>
+                <td>{{ record.participantId }}</td>
+                <td>{{ record.originalCaseId }}</td>
+                <td>{{ record.convertedCaseId }}</td>
+
+                <td>
+                  <span
+                    [class.matched-status]="record.status === 'MATCHED'"
+                    [class.unmatched-status]="record.status === 'UNMATCHED'">
+                    {{ record.status }}
+                  </span>
+                </td>
+              </tr>
+
+            } @empty {
+
+              <tr>
+                <td colspan="4">No records found.</td>
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination">
+
+        <p class="record-count">
+          Showing {{ startRecord() }}–{{ endRecord() }}
+          of {{ filteredRecords().length }} records
+        </p>
+
+        <div class="pagination-controls">
+
+          <button
+            type="button"
+            (click)="goToPreviousPage()"
+            [disabled]="currentPage() === 1">
+            Previous
+          </button>
+
+          <span>
+            Page {{ currentPage() }} of {{ totalPages() }}
+          </span>
+
+          <button
+            type="button"
+            (click)="goToNextPage()"
+            [disabled]="currentPage() >= totalPages()">
+            Next
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+  }
+
+</div>

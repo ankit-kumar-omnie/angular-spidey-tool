@@ -20,8 +20,10 @@ import { SplunkAnalyzeComponent } from './components/splunk-analyze/splunk-analy
 import { GitBranchManagerComponent } from './components/git-branch-manager/git-branch-manager.component';
 import { DbAggregationComponent } from './components/db-aggregation/db-aggregation.component';
 import { isLocalHost } from './utils/env';
-
-type ActiveTool = 'report911' | 'recordCopy' | 'eventStore' | 'splunkAnalyze' | 'gitBranchManager' | 'dbAggregation';
+import { SnixDataMigrationComponent } from './components/snix-data-migration/snix-data-migration.component';
+import { JsonMergeComponent } from './components/json-merge/json-merge.component';
+import { ClientMongoMatcherComponent } from './components/client-mongo-matcher/client-mongo-matcher.component';
+type ActiveTool = 'report911' | 'recordCopy' | 'eventStore' | 'splunkAnalyze' | 'gitBranchManager' | 'dbAggregation' | 'snixDataMigration' | 'jsonMerge'  | "clientMongoMatcher";
 
 const TOOL_LABELS: Record<ActiveTool, string> = {
   report911:        'Report 911 SPIDEY Tool',
@@ -30,6 +32,9 @@ const TOOL_LABELS: Record<ActiveTool, string> = {
   splunkAnalyze:    'Splunk Log Analyzer',
   gitBranchManager: 'Git Branch Manager',
   dbAggregation:    'DB Aggregation',
+  snixDataMigration: 'SniX Data Migration',
+  jsonMerge:         'JSON Merge Tool',
+  clientMongoMatcher: 'Client-Mongo Matcher',
 };
 
 const TOOL_ICONS: Record<ActiveTool, string> = {
@@ -39,6 +44,9 @@ const TOOL_ICONS: Record<ActiveTool, string> = {
   splunkAnalyze:    '🔍',
   gitBranchManager: '🌿',
   dbAggregation:    '🗄️',
+  snixDataMigration: '🔄',
+  jsonMerge: '🔀',
+  clientMongoMatcher: '🔗',
 };
 
 @Component({
@@ -59,6 +67,9 @@ const TOOL_ICONS: Record<ActiveTool, string> = {
     SplunkAnalyzeComponent,
     GitBranchManagerComponent,
     DbAggregationComponent,
+    SnixDataMigrationComponent,
+    JsonMergeComponent,
+    ClientMongoMatcherComponent,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],

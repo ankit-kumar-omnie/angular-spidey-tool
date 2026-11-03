@@ -1,0 +1,209 @@
+
+<div class="merge-container">
+
+  <div class="header">
+    <div>
+      <h1>JSON Merge Tool</h1>
+      <p>
+        Merge selected UUID fields from your input JSON
+        into your final JSON object.
+      </p>
+    </div>
+
+    <button class="reset-btn" (click)="reset()">
+      Reset
+    </button>
+  </div>
+
+  <!-- Input and Final JSON -->
+  <div class="json-grid">
+
+    <!-- Input Object -->
+    <section class="panel">
+
+      <div class="panel-header">
+        <div>
+          <h2>Input Object</h2>
+          <p>Source JSON data</p>
+        </div>
+
+        <label class="upload-btn">
+          Upload JSON
+          <input
+            type="file"
+            accept=".json,application/json"
+            (change)="onFileSelected($event, 'input')"
+            hidden
+          />
+        </label>
+      </div>
+
+      <textarea
+        [(ngModel)]="inputJson"
+        placeholder="Paste your Input Object JSON here..."
+        spellcheck="false"
+      ></textarea>
+
+      <div class="panel-footer">
+        <span>Paste JSON or upload a .json file</span>
+        <span>{{ inputJson.length }} characters</span>
+      </div>
+
+      <button
+        class="primary-btn full-width"
+        (click)="loadKeys()"
+      >
+        Load UUID Keys
+      </button>
+
+    </section>
+
+    <!-- Final Object -->
+    <section class="panel">
+
+      <div class="panel-header">
+        <div>
+          <h2>Final Object</h2>
+          <p>Destination JSON data</p>
+        </div>
+
+        <label class="upload-btn">
+          Upload JSON
+          <input
+            type="file"
+            accept=".json,application/json"
+            (change)="onFileSelected($event, 'final')"
+            hidden
+          />
+        </label>
+      </div>
+
+      <textarea
+        [(ngModel)]="finalJson"
+        placeholder="Paste your Final Object JSON here..."
+        spellcheck="false"
+      ></textarea>
+
+      <div class="panel-footer">
+        <span>Paste JSON or upload a .json file</span>
+        <span>{{ finalJson.length }} characters</span>
+      </div>
+
+    </section>
+
+  </div>
+
+  <!-- UUID Selection -->
+  <section class="panel keys-panel">
+
+    <div class="panel-header">
+      <div>
+        <h2>Select UUID Keys</h2>
+        <p>
+          Select the fields you want to merge from the Input Object.
+        </p>
+      </div>
+
+      <span class="key-count">
+        {{ selectedKeys.size }} / {{ availableKeys.length }} selected
+      </span>
+    </div>
+
+    <div *ngIf="availableKeys.length === 0" class="empty-state">
+      Paste or upload your Input Object and click
+      <strong>Load UUID Keys</strong>.
+    </div>
+
+    <ng-container *ngIf="availableKeys.length > 0">
+
+      <div class="selection-actions">
+        <button class="text-btn" (click)="selectAll()">
+          Select All
+        </button>
+
+        <button class="text-btn" (click)="clearSelection()">
+          Clear Selection
+        </button>
+      </div>
+
+      <div class="keys-list">
+
+        <label
+          class="key-item"
+          *ngFor="let key of availableKeys"
+        >
+          <input
+            type="checkbox"
+            [checked]="selectedKeys.has(key)"
+            (change)="toggleKey(key, $any($event.target).checked)"
+          />
+
+          <span class="key-value">{{ key }}</span>
+        </label>
+
+      </div>
+
+    </ng-container>
+
+  </section>
+
+  <!-- Merge Action -->
+  <div class="merge-action">
+    <button
+      class="merge-btn"
+      (click)="merge()"
+      [disabled]="availableKeys.length === 0"
+    >
+      Merge Objects
+    </button>
+  </div>
+
+  <!-- Messages -->
+  <div *ngIf="errorMessage" class="message error-message">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="successMessage" class="message success-message">
+    {{ successMessage }}
+  </div>
+
+  <!-- Output -->
+  <section class="panel output-panel" *ngIf="isMerged">
+
+    <div class="panel-header">
+      <div>
+        <h2>Merged JSON</h2>
+        <p>Your final merged object</p>
+      </div>
+
+      <span class="success-tag">Completed</span>
+    </div>
+
+    <textarea
+      class="output-textarea"
+      [value]="mergedJson"
+      readonly
+      spellcheck="false"
+    ></textarea>
+
+    <div class="output-actions">
+
+      <button
+        class="secondary-btn"
+        (click)="copyJson()"
+      >
+        Copy JSON
+      </button>
+
+      <button
+        class="download-btn"
+        (click)="downloadJson()"
+      >
+        Download JSON
+      </button>
+
+    </div>
+
+  </section>
+
+</div>

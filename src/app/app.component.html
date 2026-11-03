@@ -141,7 +141,28 @@
         }
       </div>
     }
+    
+  
   }
+   @if (activeTool() === "snixDataMigration") {
+  <div class="card">
+    <h2>SniX Test</h2>
+    <p>If you can see this, the tool switcher is working.</p>
+    <app-snix-data-migration />
+  </div>
+}
+@if (activeTool() === "jsonMerge") {
+  <div class="card">
+    <p class="card-title">JSON Merge Tool</p>
+    <app-json-merge />
+  </div>
+}
+@if (activeTool() === "clientMongoMatcher") {
+  <div class="card">
+    <p class="card-title">Client–Mongo Matcher</p>
+    <app-client-mongo-matcher />
+  </div>
+}
 
   @if (activeTool() === "recordCopy") {
     <div class="card">
