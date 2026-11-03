@@ -1,0 +1,274 @@
+
+<main class="matcher-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">DATA UTILITIES</p>
+      <h1>Client–Mongo Matcher</h1>
+      <p class="subtitle">
+        Match client records with MongoDB records using participant ID and applicant date.
+      </p>
+    </div>
+
+    <span class="local-badge">
+      <span class="status-dot"></span>
+      Browser-based processing
+    </span>
+  </header>
+
+  <section class="upload-grid" aria-label="Upload JSON files">
+
+    <!-- Client JSON -->
+    <article class="upload-card">
+      <div class="card-heading">
+        <span class="step-number">01</span>
+        <div>
+          <h2>Client data</h2>
+          <p>Upload the client JSON array.</p>
+        </div>
+      </div>
+
+      <label class="file-drop">
+        <input
+          type="file"
+          accept=".json,application/json"
+          (change)="onClientFileSelected($event)"
+        />
+
+        <span class="upload-icon">↑</span>
+        <strong>Choose client JSON</strong>
+        <span>Click to browse · .json</span>
+      </label>
+
+      <div class="file-info" *ngIf="clientFileName">
+        <span class="file-icon">JSON</span>
+
+        <div class="file-details">
+          <strong>{{ clientFileName }}</strong>
+          <span>{{ clientData.length | number }} records loaded</span>
+        </div>
+
+        <button
+          class="text-button"
+          type="button"
+          (click)="clearClientFile()"
+        >
+          Remove
+        </button>
+      </div>
+
+      <p class="error-message" *ngIf="clientError" role="alert">
+        {{ clientError }}
+      </p>
+
+      <div class="requirements">
+        <strong>Required fields</strong>
+        <code>5</code>
+        <code>7</code>
+        <code>95</code>
+        <span>Dates must use YYYYMMDD.</span>
+      </div>
+    </article>
+
+    <!-- Mongo JSON -->
+    <article class="upload-card">
+      <div class="card-heading">
+        <span class="step-number">02</span>
+        <div>
+          <h2>MongoDB data</h2>
+          <p>Upload the MongoDB JSON array.</p>
+        </div>
+      </div>
+
+      <label class="file-drop">
+        <input
+          type="file"
+          accept=".json,application/json"
+          (change)="onMongoFileSelected($event)"
+        />
+
+        <span class="upload-icon">↑</span>
+        <strong>Choose Mongo JSON</strong>
+        <span>Click to browse · .json</span>
+      </label>
+
+      <div class="file-info" *ngIf="mongoFileName">
+        <span class="file-icon">JSON</span>
+
+        <div class="file-details">
+          <strong>{{ mongoFileName }}</strong>
+          <span>{{ mongoData.length | number }} records loaded</span>
+        </div>
+
+        <button
+          class="text-button"
+          type="button"
+          (click)="clearMongoFile()"
+        >
+          Remove
+        </button>
+      </div>
+
+      <p class="error-message" *ngIf="mongoError" role="alert">
+        {{ mongoError }}
+      </p>
+
+      <div class="requirements">
+        <strong>Required fields</strong>
+        <code>id</code>
+        <code>participantId</code>
+        <code>applicantDate</code>
+      </div>
+    </article>
+  </section>
+
+  <!-- Process button -->
+  <section class="action-row">
+    <div class="validation-state" [class.ready]="canProcess">
+      <span class="status-dot"></span>
+
+      {{
+        canProcess
+          ? 'Both JSON files are valid and ready.'
+          : 'Upload two valid JSON files to continue.'
+      }}
+    </div>
+
+    <button
+      class="primary-button"
+      type="button"
+      [disabled]="!canProcess"
+      (click)="processData()"
+    >
+      Match records
+      <span aria-hidden="true">→</span>
+    </button>
+  </section>
+
+  <!-- Results -->
+  <section class="results-section" *ngIf="hasProcessed">
+
+    <div class="results-heading">
+      <div>
+        <p class="eyebrow">PROCESSING COMPLETE</p>
+        <h2>Matching results</h2>
+        <p class="subtitle">
+          Output follows the supplied function: de95 and caseId.
+        </p>
+      </div>
+
+      <button
+        class="download-button"
+        type="button"
+        (click)="downloadJson()"
+      >
+        <span aria-hidden="true">↓</span>
+        Download JSON
+      </button>
+    </div>
+
+    <!-- Statistics -->
+    <div class="stats-grid">
+      <article class="stat-card">
+        <span>Total client records</span>
+        <strong>{{ result.length | number }}</strong>
+      </article>
+
+      <article class="stat-card matched">
+        <span>Matched</span>
+        <strong>{{ matchedCount | number }}</strong>
+      </article>
+
+      <article class="stat-card unmatched">
+        <span>Unmatched</span>
+        <strong>{{ unmatchedCount | number }}</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Match rate</span>
+        <strong>
+          {{
+            result.length
+              ? (matchedCount / result.length * 100 | number:'1.1-1')
+              : '0'
+          }}%
+        </strong>
+      </article>
+    </div>
+
+    <!-- Output table -->
+    <div class="table-card">
+      <div class="table-toolbar">
+        <div>
+          <h3>Output preview</h3>
+          <p>
+            {{ filteredResults.length | number }}
+            of
+            {{ result.length | number }}
+            records
+          </p>
+        </div>
+
+        <input
+          class="search-input"
+          type="search"
+          placeholder="Search case ID or de95"
+          aria-label="Search output"
+          [value]="searchTerm"
+          (input)="searchTerm = $any($event.target).value"
+        />
+      </div>
+
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>de95</th>
+              <th>caseId</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let record of filteredResults; let i = index">
+              <td class="row-number">{{ i + 1 }}</td>
+
+              <td>{{ record.de95 }}</td>
+
+              <td class="case-id">
+                {{ record.caseId || '—' }}
+              </td>
+
+              <td>
+                <span
+                  class="status-pill"
+                  [class.is-matched]="record.caseId !== ''"
+                  [class.is-unmatched]="record.caseId === ''"
+                >
+                  {{ record.caseId ? 'MATCHED' : 'UNMATCHED' }}
+                </span>
+              </td>
+            </tr>
+
+            <tr *ngIf="filteredResults.length === 0">
+              <td class="empty-state" colspan="4">
+                No records match your search.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="output-note">
+        The downloaded file contains the complete result,
+        regardless of the current search filter.
+      </p>
+    </div>
+  </section>
+
+  <footer class="privacy-note">
+    <span aria-hidden="true">◇</span>
+    Your JSON files are processed locally in this browser.
+    They are not uploaded to a server.
+  </footer>
+</main>
